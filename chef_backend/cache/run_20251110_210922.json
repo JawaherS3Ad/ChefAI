@@ -1,0 +1,50 @@
+{
+  "detected_ingredients": {
+    "used": [],
+    "uncertain": [],
+    "notes": "{\n  \"ingredients\": [\n    {\n      \"name_ar\": \"طماطم\",\n      \"quantity_estimate\": 5,\n      \"unit\": \"حبة\",\n      \"state\": \"طازج\",\n      \"category\": \"خضار\",\n      \"confidence\": 0.95,\n      \"inferred\": false\n    },\n    {\n      \"name_ar\": \"خس\",\n      \"quantity_estimate\": 4,\n      \"unit\": \"حبة\",\n      \"state\": \"طازج\",\n      \"category\": \"خضار\",\n      \"confidence\": 0.90,\n      \"inferred\": false\n    },\n    {\n      \"name_ar\": \"فاصوليا خضراء\",\n      \"quantity_estimate\": 2,\n      \"unit\": \"حزمة\",\n      \"state\": \"طازج\",\n      \"category\": \"خضار\",\n      \"confidence\": 0.85,\n      \"inferred\": false\n    },\n    {\n      \"name_ar\": \"خيار\",\n      \"quantity_estimate\": 2,\n      \"unit\": \"حبة\",\n      \"state\": \"طازج\",\n      \"category\": \"خضار\",\n      \"confidence\": 0.80,\n      \"inferred\": false\n    },\n    {\n      \"name_ar\": \"جزر\",\n      \"quantity_estimate\": 3,\n      \"unit\": \"حبة\",\n      \"state\": \"طازج\",\n      \"category\": \"خضار\",\n      \"confidence\": 0.75,\n      \"inferred\": false\n    },\n    {\n      \"name_ar\": \"بطاطس\",\n      \"quantity_estimate\": 4,\n      \"unit\": \"حبة\",\n      \"state\": \"طازج\",\n      \"category\": \"نشويات\",\n      \"confidence\": 0.85,\n      \"inferred\": false\n    },\n    {\n      \"name_ar\": \"بيض\",\n      \"quantity_estimate\": 6,\n      \"unit\": \"حبة\",\n      \"state\": \"طازج\",\n      \"category\": \"بروتين\",\n      \"confidence\": 0.90,\n      \"inferred\": false\n    },\n    {\n      \"name_ar\": \"لحم مفروم\",\n      \"quantity_estimate\": 1,\n      \"unit\": \"حصة\",\n      \"state\": \"مجمد\",\n      \"category\": \"بروتين\",\n      \"confidence\": 0.70,\n      \"inferred\": true\n    },\n    {\n      \"name_ar\": \"معكرونة\",\n      \"quantity_estimate\": 1,\n      \"unit\": \"حصة\",\n      \"state\": \"مطبوخة\",\n      \"category\": \"نشويات\",\n      \"confidence\": 0.65,\n      \"inferred\": true\n    },\n    {\n      \"name_ar\": \"خضروات مخلل\",\n      \"quantity_estimate\": 1,\n      \"unit\": \"حصة\",\n      \"state\": \"مخلل\",\n      \"category\": \"خضار\",\n      \"confidence\": 0.70,\n      \"inferred\": true\n    },\n    {\n      \"name_ar\": \"خضروات مجمدة\",\n      \"quantity_estimate\": 1,\n      \"unit\": \"حصة\",\n      \"state\": \"مجمدة\",\n      \"category\": \"خضار\",\n      \"confidence\": 0.60,\n      \"inferred\": true\n    },\n    {\n      \"name_ar\": \"خضروات مقطعة\",\n      \"quantity_estimate\": 1,\n      \"unit\": \"حصة\",\n      \"state\": \"طازج\",\n      \"category\": \"خضار\",\n      \"confidence\": 0.70,\n      \"inferred\": true\n    },\n    {"
+  },
+  "preferences": {
+    "meal_type": "Dinner",
+    "time_limit": "30m",
+    "servings": 2,
+    "cuisines": [
+      "Saudi",
+      "Italian"
+    ]
+  },
+  "suggested_recipe": {
+    "recipe_name": "كرواسان بيتزا مقلوبة",
+    "ingredients_needed": [
+      "العجين",
+      "الصلصة",
+      "الجبن",
+      "النعناع",
+      "الزيتون الأسود"
+    ],
+    "preparation_steps": [
+      "سخن الفرن إلى 220 درجة مئوية.",
+      "استخدم العجين المُحضَّر مسبقًا أو اصنعه من دقيق القمح والخميرة وزيت الزيتون والماء.",
+      "نضع الصلصة على العجين.",
+      "نضع الجبن المبشور على الصلصة.",
+      "نرش النعناع الأخضر المفروم.",
+      "تُزيَّن بتارت الزيتون الأسود.",
+      "أدخل البيتزا إلى الفرن واطهها لمدة 10-15 دقيقة حتى تُحمَّر.",
+      "ارفعها من الفرن واتركها تبرد قليلًا قبل التقديم."
+    ],
+    "cooking_time_minutes": 15,
+    "cuisine_type": "Italian/Saudi"
+  },
+  "missing_items": [
+    "العجين",
+    "الصلصة",
+    "الجبن",
+    "النعناع",
+    "الزيتون الأسود"
+  ],
+  "nutrition_info": null,
+  "meta": {
+    "confidence_threshold": 0.5,
+    "cache_saved_at": null
+  }
+}

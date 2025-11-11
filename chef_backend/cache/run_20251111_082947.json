@@ -1,0 +1,144 @@
+{
+  "detected_ingredients": {
+    "used": [
+      {
+        "name_ar": "طماطم",
+        "quantity_estimate": 5,
+        "unit": "حبة",
+        "state": "طازج",
+        "category": "خضار",
+        "confidence": 0.95,
+        "inferred": false
+      },
+      {
+        "name_ar": "فلفل أخضر",
+        "quantity_estimate": 3,
+        "unit": "حبة",
+        "state": "طازج",
+        "category": "خضار",
+        "confidence": 0.92,
+        "inferred": false
+      },
+      {
+        "name_ar": "خس",
+        "quantity_estimate": 2,
+        "unit": "حزمة",
+        "state": "طازج",
+        "category": "خضار",
+        "confidence": 0.88,
+        "inferred": false
+      },
+      {
+        "name_ar": "بروكلي",
+        "quantity_estimate": 2,
+        "unit": "حزمة",
+        "state": "طازج",
+        "category": "خضار",
+        "confidence": 0.85,
+        "inferred": false
+      },
+      {
+        "name_ar": "فاصوليا خضراء",
+        "quantity_estimate": 1,
+        "unit": "حزمة",
+        "state": "طازج",
+        "category": "خضار",
+        "confidence": 0.8,
+        "inferred": false
+      },
+      {
+        "name_ar": "بطاطس",
+        "quantity_estimate": 4,
+        "unit": "حبة",
+        "state": "طازج",
+        "category": "نشويات",
+        "confidence": 0.9,
+        "inferred": false
+      },
+      {
+        "name_ar": "بيض",
+        "quantity_estimate": 6,
+        "unit": "حبة",
+        "state": "طازج",
+        "category": "بروتين",
+        "confidence": 0.9,
+        "inferred": true
+      },
+      {
+        "name_ar": "لحم مقطّع",
+        "quantity_estimate": 1,
+        "unit": "حزمة",
+        "state": "طازج",
+        "category": "بروتين",
+        "confidence": 0.85,
+        "inferred": false
+      },
+      {
+        "name_ar": "صلصة طماطم",
+        "quantity_estimate": 1,
+        "unit": "علبة",
+        "state": "معلّب",
+        "category": "أخرى",
+        "confidence": 0.9,
+        "inferred": false
+      },
+      {
+        "name_ar": "صلصة خردل",
+        "quantity_estimate": 1,
+        "unit": "علبة",
+        "state": "معلّب",
+        "category": "أخرى",
+        "confidence": 0.85,
+        "inferred": false
+      },
+      {
+        "name_ar": "خضروات مخلّلة",
+        "quantity_estimate": 1,
+        "unit": "حزمة",
+        "state": "مخلل",
+        "category": "خضار",
+        "confidence": 0.8,
+        "inferred": true
+      }
+    ],
+    "uncertain": [],
+    "notes": "العناصر موزعة بشكل منظم في الثلاجة."
+  },
+  "preferences": {
+    "meal_type": "Dinner",
+    "time_limit": "30m",
+    "servings": 2,
+    "cuisines": [
+      "Saudi",
+      "Italian"
+    ]
+  },
+  "suggested_recipe": {
+    "recipe_name": "أرز باللحمة والخضروات",
+    "ingredients_needed": [
+      "بطاطس",
+      "لحم مقطّع",
+      "طماطم",
+      "فلفل أخضر",
+      "خس",
+      "بروكلي",
+      "صلصة طماطم",
+      "صلصة خردل"
+    ],
+    "preparation_steps": [
+      "قم بقلي البطاطس في قدر بكمية كافية من الزيت حتى تصبح ذهبية.",
+      "أضف اللحم المقطّع إلى القدر وقلّيه حتى ينضج.",
+      "أضف الطماطم والفلفل الأخضر والخس والبروكلي إلى القدر وقلّب المكونات.",
+      "أضف صلصة الطماطم وصلصة الخردل إلى القدر واتركها على نار خفيفة حتى تغلي.",
+      "قدم الأرز مع اللحم والخضروات مع صلصة الطماطم والخردل."
+    ],
+    "cooking_time_minutes": 30,
+    "cuisine_type": "Saudi and Italian Fusion"
+  },
+  "missing_items": [],
+  "nutrition_info": null,
+  "meta": {
+    "confidence_threshold": 0.5,
+    "cache_saved_at": null
+  }
+}

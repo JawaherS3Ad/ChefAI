@@ -1,0 +1,137 @@
+{
+  "detected_ingredients": {
+    "used": [
+      {
+        "name_en": "green bell peppers",
+        "name_ar": "فلفل أخضر",
+        "quantity_estimate": 3,
+        "unit": "حبة",
+        "state": "طازج",
+        "category": "خضار",
+        "confidence": 0.95,
+        "inferred": false
+      },
+      {
+        "name_en": "broccoli",
+        "name_ar": "بروكلي",
+        "quantity_estimate": 2,
+        "unit": "حزمة",
+        "state": "طازج",
+        "category": "خضار",
+        "confidence": 0.9,
+        "inferred": false
+      },
+      {
+        "name_en": "tomatoes",
+        "name_ar": "طماطم",
+        "quantity_estimate": 5,
+        "unit": "حبة",
+        "state": "طازج",
+        "category": "خضار",
+        "confidence": 0.85,
+        "inferred": false
+      },
+      {
+        "name_en": "lettuce",
+        "name_ar": "خس",
+        "quantity_estimate": 1,
+        "unit": "حزمة",
+        "state": "طازج",
+        "category": "خضار",
+        "confidence": 0.8,
+        "inferred": false
+      },
+      {
+        "name_en": "pears",
+        "name_ar": "خوخ",
+        "quantity_estimate": 2,
+        "unit": "حبة",
+        "state": "طازج",
+        "category": "فواكه",
+        "confidence": 0.75,
+        "inferred": false
+      },
+      {
+        "name_en": "cherries",
+        "name_ar": "كرز",
+        "quantity_estimate": 1,
+        "unit": "حزمة",
+        "state": "طازج",
+        "category": "فواكه",
+        "confidence": 0.7,
+        "inferred": false
+      },
+      {
+        "name_en": "eggs",
+        "name_ar": "بيض",
+        "quantity_estimate": 6,
+        "unit": "حبة",
+        "state": "طازج",
+        "category": "بروتين",
+        "confidence": 0.9,
+        "inferred": false
+      },
+      {
+        "name_en": "chicken breast",
+        "name_ar": "صدر دجاج",
+        "quantity_estimate": 2,
+        "unit": "حبة",
+        "state": "مجمد",
+        "category": "بروتين",
+        "confidence": 0.85,
+        "inferred": false
+      },
+      {
+        "name_en": "yogurt",
+        "name_ar": "زبادي",
+        "quantity_estimate": 2,
+        "unit": "حزمة",
+        "state": "طازج",
+        "category": "ألبان",
+        "confidence": 0.8,
+        "inferred": false
+      },
+      {
+        "name_en": "olives",
+        "name_ar": "زيتون",
+        "quantity_estimate": 1,
+        "unit": "حزمة",
+        "state": "طازج",
+        "category": "خضار",
+        "confidence": 0.75,
+        "inferred": false
+      }
+    ],
+    "uncertain": [],
+    "notes": "Some items are stored in containers, but specific quantities may vary."
+  },
+  "preferences": {
+    "meal_type": "Dinner",
+    "time_limit": "30m",
+    "servings": 2,
+    "cuisines": [
+      "Saudi",
+      "Italian"
+    ]
+  },
+  "suggested_recipe": {
+    "recipe_name": "سلطة الدجاج بالخس والطماطم",
+    "ingredients_needed": [],
+    "preparation_steps": [
+      "1. قطع صدور الدجاج إلى مكعبات صغيرة.",
+      "2. تقطيع الخس إلى شرائح رقيقة.",
+      "3. تقطيع الطماطم إلى شرائح.",
+      "4. خلط جميع المكونات معًا في وعاء كبير.",
+      "5. إضافة الزيتون المفروم كزينة."
+    ],
+    "cooking_time_minutes": 15,
+    "cuisine_type": "Saudi"
+  },
+  "missing_items": [],
+  "shopping_suggestions": [],
+  "nutrition_info": null,
+  "meta": {
+    "confidence_threshold": 0.5,
+    "cache_saved_at": null
+  }
+}

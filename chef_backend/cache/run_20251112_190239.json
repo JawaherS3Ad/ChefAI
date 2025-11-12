@@ -1,0 +1,145 @@
+{
+  "detected_ingredients": {
+    "used": [
+      {
+        "name_en": "green bell peppers",
+        "name_ar": "فلفل أخضر",
+        "quantity_estimate": 2,
+        "unit": "حبة",
+        "state": "طازج",
+        "category": "خضار",
+        "confidence": 0.95,
+        "inferred": false
+      },
+      {
+        "name_en": "broccoli",
+        "name_ar": "بروكلي",
+        "quantity_estimate": 2,
+        "unit": "حبة",
+        "state": "طازج",
+        "category": "خضار",
+        "confidence": 0.9,
+        "inferred": false
+      },
+      {
+        "name_en": "tomatoes",
+        "name_ar": "طماطم",
+        "quantity_estimate": 4,
+        "unit": "حبة",
+        "state": "طازج",
+        "category": "خضار",
+        "confidence": 0.9,
+        "inferred": false
+      },
+      {
+        "name_en": "lettuce",
+        "name_ar": "خس",
+        "quantity_estimate": 1,
+        "unit": "حزمة",
+        "state": "طازج",
+        "category": "خضار",
+        "confidence": 0.85,
+        "inferred": false
+      },
+      {
+        "name_en": "pears",
+        "name_ar": "خوخ",
+        "quantity_estimate": 2,
+        "unit": "حبة",
+        "state": "طازج",
+        "category": "فواكه",
+        "confidence": 0.8,
+        "inferred": false
+      },
+      {
+        "name_en": "apples",
+        "name_ar": "تفاح",
+        "quantity_estimate": 3,
+        "unit": "حبة",
+        "state": "طازج",
+        "category": "فواكه",
+        "confidence": 0.8,
+        "inferred": false
+      },
+      {
+        "name_en": "eggs",
+        "name_ar": "بيض",
+        "quantity_estimate": 6,
+        "unit": "حبة",
+        "state": "طازج",
+        "category": "بروتين",
+        "confidence": 0.9,
+        "inferred": false
+      },
+      {
+        "name_en": "chicken breast",
+        "name_ar": "صدر دجاج",
+        "quantity_estimate": 2,
+        "unit": "حبة",
+        "state": "طازج",
+        "category": "بروتين",
+        "confidence": 0.85,
+        "inferred": false
+      },
+      {
+        "name_en": "spaghetti",
+        "name_ar": "معكرونة",
+        "quantity_estimate": 1,
+        "unit": "حزمة",
+        "state": "معلّب",
+        "category": "نشويات",
+        "confidence": 0.8,
+        "inferred": false
+      },
+      {
+        "name_en": "olives",
+        "name_ar": "زيتون",
+        "quantity_estimate": 1,
+        "unit": "حزمة",
+        "state": "طازج",
+        "category": "خضار",
+        "confidence": 0.75,
+        "inferred": false
+      }
+    ],
+    "uncertain": [],
+    "notes": "Some items are packed in containers, but specific quantities may vary."
+  },
+  "preferences": {
+    "meal_type": "Dinner",
+    "time_limit": "30m",
+    "servings": 2,
+    "cuisines": [
+      "Saudi",
+      "Italian"
+    ]
+  },
+  "suggested_recipe": {
+    "recipe_name": "أطعمة دجاج مع معكرونة",
+    "ingredients_needed": [
+      "صدر دجاج (2 حبة)",
+      "معكرونة (1 حزمة)",
+      "طماطم (4 حبة)",
+      "فلفل أخضر (2 حبة)",
+      "زيتون (1 حزمة)"
+    ],
+    "preparation_steps": [
+      "1. اغسل الطماطم وقطعها إلى مكعبات.",
+      "2. قشر الفلفل الأخضر وقطعه إلى شرائح.",
+      "3. اطهي معكرونة حسب التعليمات على العبوة.",
+      "4. في مقلاة، سخن القليل من الزيت واقلي صدور الدجاج حتى تنضج.",
+      "5. أضف شرائح الفلفل الأخضر والزيتون إلى المقلاة واطهيهما لمدة 5 دقائق.",
+      "6. قم بخلط المعكرونة مع مكونات المقلاة.",
+      "7. قدم الأطباق مع طماطم مكعبات كزينة."
+    ],
+    "cooking_time_minutes": 25,
+    "cuisine_type": "إيطالي"
+  },
+  "missing_items": [],
+  "shopping_suggestions": [],
+  "nutrition_info": null,
+  "meta": {
+    "confidence_threshold": 0.5,
+    "cache_saved_at": null
+  }
+}

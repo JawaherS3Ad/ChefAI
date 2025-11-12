@@ -1,22 +1,18 @@
-# الملف: chefai/backend/main.py (النسخة النهائية لهذه المرحلة)
+# الملف: chefai/backend/main.py (النسخة المعدلة - LangGraph مع Shopping Agent)
 import uvicorn
-from fastapi import FastAPI, HTTPException, Request
+from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from typing import Optional, List, Dict, Any
-import uuid # لتوليد أرقام تعريف فريدة للجلسة
-
-# هذا السطر ضروري لقراءة المفتاح من ملف .env
+import uuid
 from dotenv import load_dotenv 
-load_dotenv() 
 
+load_dotenv()
 
-# استيراد LangGraph Core ووكلاء LLM (العقل المدبر)
-from .langgraph_core import chef_graph, ChefState # ChefState لتعريف حالة الإدخال
-# لن نستخدم Ollama مباشرة هنا، بل سنستخدمه عبر LangGraph
+# ✅ استيراد LangGraph Core
+from chef_backend.langgraph_core import chef_graph, ChefState
 
-# ----------------- الإعدادات العامة ونماذج البيانات -----------------
-app = FastAPI(title="ChefAI Core", version="1.0 - LangGraph Integrated")
+app = FastAPI(title="ChefAI Core", version="1.0 - LangGraph Integrated with Shopping")
 
 # إعداد CORS
 app.add_middleware(
@@ -27,59 +23,56 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# نموذج الإدخال لنقطة النهاية /start
+# نموذج الإدخال
 class StartInput(BaseModel):
-    """البيانات المتوقعة عند بدء الجلسة (الصورة المُلتقطة)."""
     image_base64: str
+    meal_type: Optional[str] = None
+    time_limit: Optional[str] = None
+    servings: Optional[int] = None
+    cuisines: Optional[List[str]] = None
 
-# نموذج الإخراج المتوقع
+# نموذج الإخراج
 class ChefOutput(BaseModel):
     session_id: str
-    suggested_recipes: List[Dict[str, str]]
-    status_message: str
+    recipe: Optional[Dict[str, Any]] = None
+    missing_items: Optional[List[str]] = None
+    shopping_suggestions: Optional[List[Dict[str, Any]]] = None
+    error: Optional[str] = None
 
-# ----------------- نقطة النهاية الرئيسية (ابدأ) -----------------
 
 @app.post("/api/chef/start", response_model=ChefOutput)
-async def start_chef_session(input_data: StartInput):
-    """
-    يبدأ جلسة شيف جديدة: يتلقى الصورة ويُطلق تدفق LangGraph لتحليلها واقتراح الوصفات.
-    """
-    # 1. توليد مُعرّف جلسة فريد (مهم لعمليات التخزين المؤقت لاحقًا)
+async def start_chef_session(inp: StartInput):
     session_id = str(uuid.uuid4())
     print(f"\n--- [Session: {session_id}] --- بدأت جلسة جديدة.")
 
-    # 2. إعداد الحالة الأولية لتشغيل LangGraph
-    initial_state = ChefState(
-        session_id=session_id,
-        image_base64=input_data.image_base64,
-        ingredients="", # سيتعبأ بواسطة أول وكيل
-        suggested_recipes=[], # سيتعبأ بواسطة وكيل الوصفات
-    )
+    init: ChefState = {
+        "session_id": session_id,
+        "image_base64": inp.image_base64,
+        "preferences": {
+            "meal_type": inp.meal_type,
+            "time_limit": inp.time_limit,
+            "servings": inp.servings,
+            "cuisines": inp.cuisines or []
+        }
+    }
 
     try:
-        # 3. تشغيل تدفق LangGraph
-        # .invoke() تدير تدفق العمل بالكامل من البداية للنهاية
-        final_state = chef_graph.invoke(initial_state)
+        # ✅ التصحيح هنا
+        final_state = chef_graph.invoke(init)
+        fp = final_state.get("final_payload", {})
 
-        # 4. بناء الرد النهائي
-        return ChefOutput(
-            session_id=session_id,
-            suggested_recipes=final_state.get('suggested_recipes', []),
-            status_message="تم تحليل الصورة واقتراح الوصفات بنجاح."
-        )
-
+        return {
+            "session_id": session_id,
+            **fp
+            }
+    
     except Exception as e:
         print(f"❌ خطأ فادح في تدفق LangGraph: {e}")
-        # التعامل مع الأخطاء وإرسال استجابة 500
         raise HTTPException(
             status_code=500,
             detail=f"فشل في تشغيل نظام الذكاء الاصطناعي: {str(e)}"
         )
 
-# ----------------- تشغيل الخادم -----------------
-
 if __name__ == "__main__":
     print("🚀 جاري إطلاق خادم ChefAI FastAPI والتحقق من LangGraph...")
-    # الأمر الصحيح للتشغيل مع Uvicorn:
     uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)

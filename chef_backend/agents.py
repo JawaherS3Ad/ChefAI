@@ -324,9 +324,35 @@ def process_recipe_request(
 # -----------------------------
 # واجهات LangGraph التوافقية (alias)
 # -----------------------------
+
 def analyze_image_api(image_base64: str, session_id: str):
     """واجهة بسيطة لتحليل الصورة (LangGraph-compatible)."""
-    return analyze_fridge_image(image_base64)
+    """
+    غلاف آمن لوكيل الرؤية.
+    يضمن دائمًا إرجاع dict فيه مفتاح 'ingredients' حتى لو فشل النموذج.
+    """
+    partial = None
+    try:
+        from .vision_agent import analyze_fridge_image
+        partial = analyze_fridge_image(image_base64)  # قد يرجع نص/JSON
+        if not partial:
+            partial = {"ingredients": []}
+        # لو رجع نص JSON كسلسلة
+        if isinstance(partial, str):
+            # نحاول نقرأه هنا مباشرة، أو نتركه للدالة parse_vision_json داخل langgraph_core
+            try:
+                import json
+                partial = json.loads(partial)
+            except Exception:
+                partial = {"ingredients": []}
+        # تأكيد وجود المفتاح
+        if "ingredients" not in partial:
+            partial["ingredients"] = []
+        return partial
+    except Exception as e:
+        print(f"⚠️ Vision wrapper failed: {e}")
+        return {"ingredients": []}
+
 
 def suggest_recipes_agent(ingredients_json: dict):
     """واجهة بسيطة لتوليد الوصفة (LangGraph-compatible)."""

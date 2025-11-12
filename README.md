@@ -85,6 +85,7 @@ CHEFAI/
 * If you’re using the shared testing key, treat it as temporary — it may be revoked anytime.
 * For personal testing, create your own free API key at [OpenRouter.ai](https://openrouter.ai).
 
+Note: Vision Agent works with an active fallback interface and will be improved later.
 ---
 
 Happy coding 💡

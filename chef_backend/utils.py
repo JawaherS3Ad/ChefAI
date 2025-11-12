@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import json
+import re
 from typing import Any, Dict
 
 def parse_vision_json(raw: str | Dict[str, Any]) -> Dict[str, Any]:
@@ -21,3 +22,18 @@ def parse_vision_json(raw: str | Dict[str, Any]) -> Dict[str, Any]:
         return json.loads(text)
     except Exception:
         return {"ingredients": [], "notes": text}
+# -----------------------------
+# وظيفة بسيطة لتطبيع النص العربي (نسخة خفيفة)
+# -----------------------------
+import re
+
+def normalize_ar_basic(text: str) -> str:
+    """إزالة التشكيل والرموز وتوحيد الحروف العربية للمقارنة."""
+    if not text:
+        return ""
+    text = re.sub(r"[^\w\u0600-\u06FF\s]", "", text)  # حذف الرموز
+    text = re.sub(r"\s+", " ", text)
+    text = text.replace("أ", "ا").replace("إ", "ا").replace("آ", "ا")
+    text = text.replace("ة", "ه").replace("ى", "ي")
+    return text.strip().lower()
+

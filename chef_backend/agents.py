@@ -246,7 +246,9 @@ def process_recipe_request(
 
     items = vision.get("ingredients", []) or []
     # اكتمال العربي من القاموس عند الحاجة
-    _fill_missing_ar_names(items)
+    from chef_backend.namefixer_agent import fix_ingredients_names
+    items = fix_ingredients_names(items)
+
     # تنظيف/دمج/توحيد
     items = sanitize_items(items)
     # تقسيم حسب الثقة (low-conf تروح لقائمة uncertain)
@@ -363,7 +365,7 @@ def suggest_recipes_agent(ingredients_json: dict):
 # -----------------------------
 if __name__ == "__main__":
     # مثال تشغيل: مرّري صورة حقيقية لديك (ملف/رابط/بِـيس64)
-    SAMPLE_IMAGE = "fridge.jpg"  # عدّليها إذا لزم
+    SAMPLE_IMAGE = str(Path(__file__).resolve().parent.parent / "fridge.jpg")
     result = process_recipe_request(
         SAMPLE_IMAGE,
         meal_type="Dinner",

@@ -1,0 +1,139 @@
+{
+  "detected_ingredients": {
+    "used": [
+      {
+        "name_en": "tomato",
+        "name_ar": "طماطم",
+        "quantity_estimate": 5,
+        "unit": "piece",
+        "state": "fresh",
+        "category": "vegetable",
+        "confidence": 0.95,
+        "inferred": false
+      },
+      {
+        "name_en": "bell pepper",
+        "name_ar": "bell pepper",
+        "quantity_estimate": 2,
+        "unit": "piece",
+        "state": "fresh",
+        "category": "vegetable",
+        "confidence": 0.9,
+        "inferred": false
+      },
+      {
+        "name_en": "lettuce",
+        "name_ar": "خس",
+        "quantity_estimate": 1,
+        "unit": "bundle",
+        "state": "fresh",
+        "category": "vegetable",
+        "confidence": 0.85,
+        "inferred": false
+      },
+      {
+        "name_en": "broccoli",
+        "name_ar": "بروكلي",
+        "quantity_estimate": 1,
+        "unit": "bundle",
+        "state": "fresh",
+        "category": "vegetable",
+        "confidence": 0.8,
+        "inferred": false
+      },
+      {
+        "name_en": "egg",
+        "name_ar": "بيض",
+        "quantity_estimate": 6,
+        "unit": "piece",
+        "state": "fresh",
+        "category": "protein",
+        "confidence": 0.9,
+        "inferred": true
+      },
+      {
+        "name_en": "chicken breast",
+        "name_ar": "صدر دجاج",
+        "quantity_estimate": 2,
+        "unit": "piece",
+        "state": "raw",
+        "category": "protein",
+        "confidence": 0.75,
+        "inferred": true
+      },
+      {
+        "name_en": "peach",
+        "name_ar": "peach",
+        "quantity_estimate": 3,
+        "unit": "piece",
+        "state": "fresh",
+        "category": "fruit",
+        "confidence": 0.8,
+        "inferred": false
+      },
+      {
+        "name_en": "pear",
+        "name_ar": "pear",
+        "quantity_estimate": 2,
+        "unit": "piece",
+        "state": "fresh",
+        "category": "fruit",
+        "confidence": 0.75,
+        "inferred": false
+      },
+      {
+        "name_en": "strawberry",
+        "name_ar": "strawberry",
+        "quantity_estimate": 10,
+        "unit": "piece",
+        "state": "fresh",
+        "category": "fruit",
+        "confidence": 0.85,
+        "inferred": false
+      },
+      {
+        "name_en": "green beans",
+        "name_ar": "فاصوليا خضراء",
+        "quantity_estimate": 1,
+        "unit": "bundle",
+        "state": "fresh",
+        "category": "vegetable",
+        "confidence": 0.7,
+        "inferred": false
+      }
+    ],
+    "uncertain": [],
+    "notes": "Some items are inferred due to packaging."
+  },
+  "preferences": {
+    "meal_type": "Dinner",
+    "time_limit": "30m",
+    "servings": 2,
+    "cuisines": [
+      "Saudi",
+      "Italian"
+    ]
+  },
+  "suggested_recipe": {
+    "recipe_name": "أطعمة سريعة",
+    "ingredients_needed": [],
+    "preparation_steps": [
+      "1. اغسل الطماطم والخس والفاصوليا الخضراء جيدًا.",
+      "2. قطّع الطماطم إلى شرائح رقيقة.",
+      "3. قطّع الخس إلى شرائح.",
+      "4. قطّع الفاصوليا الخضراء إلى قطع صغيرة.",
+      "5. ضع جميع المكونات في وعاء كبير.",
+      "6. قدمها كطبق جانبي سريع.",
+      "7. استمتع بوجبة العشاء السريعة!"
+    ],
+    "cooking_time_minutes": 15,
+    "cuisine_type": "Saudi and Italian Fusion"
+  },
+  "missing_items": [],
+  "shopping_suggestions": [],
+  "nutrition_info": null,
+  "meta": {
+    "confidence_threshold": 0.5,
+    "cache_saved_at": null
+  }
+}

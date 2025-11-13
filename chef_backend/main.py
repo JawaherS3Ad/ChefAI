@@ -75,4 +75,4 @@ async def start_chef_session(inp: StartInput):
 
 if __name__ == "__main__":
     print("🚀 جاري إطلاق خادم ChefAI FastAPI والتحقق من LangGraph...")
-    uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
+    uvicorn.run("chef_backend.main:app", host="0.0.0.0", port=8000, reload=True)

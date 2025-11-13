@@ -1,5 +1,7 @@
 import os
 import base64
+import io
+from PIL import Image
 from dotenv import load_dotenv
 from langchain_openai import ChatOpenAI
 
@@ -10,43 +12,89 @@ def _image_part(image: str):
     تحويل الصورة إلى صيغة مناسبة للإرسال
     image قد يكون:
     1) base64 ببادئة data:image
-    2) رابط http/https
-    3) مسار ملف محلي
+    2) base64 خام بدون بادئة
+    3) رابط http/https
+    4) مسار ملف محلي
     """
+    # 🧠 الحالة 1: data:image
     if image.startswith("data:image"):
         return {"type": "image_url", "image_url": image}
+
+    # 🧠 الحالة 2: base64 خام (من Swagger)
+    if len(image) > 500 and not os.path.exists(image) and not image.startswith("http"):
+        # نضيف البادئة المناسبة
+        return {"type": "image_url", "image_url": f"data:image/png;base64,{image}"}
+
+    # 🧠 الحالة 3: رابط
     if image.startswith("http://") or image.startswith("https://"):
         return {"type": "image_url", "image_url": image}
-    # مسار محلي → حوله إلى base64
+
+    # ✅ إصلاح سريع: لو النص Base64 خام بدون data:image
+    if len(image) > 500 and not os.path.exists(image):
+        return {"type": "image_url", "image_url": f"data:image/png;base64,{image}"}
+
+
+    # 🧠 الحالة 4: ملف محلي
     with open(image, "rb") as f:
         b64 = base64.b64encode(f.read()).decode("utf-8")
     ext = "jpeg" if image.lower().endswith((".jpg", ".jpeg")) else "png"
     return {"type": "image_url", "image_url": f"data:image/{ext};base64,{b64}"}
 
+
 # البرومبت المحسّن والدقيق
 PROMPT_VISION = (
-    "You are a precise food vision assistant. You will be given ONE image of a fridge or ingredients.\n"
-    "STRICT RULES:\n"
-    "1) Output valid JSON ONLY. No explanations, no code fences, no prose.\n"
-    "2) Include ONLY edible items (ignore shelves/containers as independent items).\n"
-    "3) For each item, return BOTH English and Arabic names:\n"
-    "   - name_en: REQUIRED, specific (e.g., 'green bell pepper', 'broccoli', 'beef cubes').\n"
-    "   - name_ar: Arabic equivalent if confident, else empty string ''.\n"
-    "4) If an item is inside a recognizable package (e.g., egg carton), set inferred=true and a suitable confidence.\n"
-    "5) Fields per item: name_en, name_ar, quantity_estimate (int), unit ('حبة'/'حزمة'/'جم'/'مل'), "
-    "   state ('طازج'/'مجمد'/'مطبوخ'/'مخلل'/'معلّب'), category ('خضار'/'فواكه'/'بروتين'/'نشويات'/'ألبان'/'بهارات'/'مشروبات'/'أخرى'), "
-    "   confidence (0..1), inferred (bool).\n"
-    "6) FORBIDDEN generic buckets unless SPECIFIC type is known: "
-    "[\"mixed vegetables\", \"cut vegetables\", \"frozen vegetables\", \"mixed fruits\", \"frozen meats\", \"sauces\"]. "
-    "Use specific names instead.\n"
-    "7) Merge duplicates internally: do not repeat the same ingredient, sum quantities.\n"
-    "8) Max 20 items, prioritize cooking-relevant ones (proteins/starches/vegetables).\n"
-    "9) Keep the JSON concise: maximum 10 ingredients. Do not include repeated or decorative items."
-    "OUTPUT JSON SHAPE:\n"
-    "{ \"ingredients\": [ { \"name_en\": \"tomato\", \"name_ar\": \"طماطم\", \"quantity_estimate\": 3, \"unit\": \"حبة\", "
-    "\"state\": \"طازج\", \"category\": \"خضار\", \"confidence\": 0.92, \"inferred\": false } ], "
-    "\"notes\": \"short notes if needed\" }\n"
-    "Return VALID JSON ONLY."
+    """
+你是一位精确的食材视觉助手。你将收到一张冰箱或食材的图片。你的主要目标是准确识别所有可食用项，并严格遵守 JSON 输出格式。
+
+【严格规则】
+1. **只输出 JSON**。不要添加任何解释、代码块或多余的文字。
+2. **只包括可食用的项目**（忽略包装、容器、架子）。
+3. **输出最多 10 个项目**，优先选择蛋白质、淀粉和主要蔬菜。
+4. **必须使用 Pydantic Schema 的字段和类型**。
+5. **语言要求：** "name_en" 字段必须使用**中文**（例如 '番茄', '鸡蛋', '黄瓜'）**，
+但请仍然将所有项目放在顶级 JSON 字段 "ingredients" 中。
+6. **置信度：** 如果不确定（例如 العناصر مخفية أو غير واضحة），请设置 "confidence" 低于 0.5。
+
+【输出 JSON 字段和约束】
+对于每个食材，请提供以下字段，字段名和类型必须严格遵守：
+- "name_en": 具体的英文名称（例如 'green bell pepper', 'egg'）
+- "name_ar": **空字符串 ""**（由下游代理处理）
+- "quantity_estimate": 大致数量 (int)
+- "unit": 单位（例如 'piece', 'bundle', 'gram'）
+- "state": 状态（例如 'fresh', 'cooked', 'canned'）
+- "category": 类别（例如 'vegetable', 'fruit', 'protein'）
+- "confidence": 置信度 (0.0 到 1.0)
+- "inferred": 布尔值（如果项目在封闭包装中则为 true）
+
+【输出 JSON 示例 - 严格遵守此格式】
+{
+  "ingredients": [
+    {
+      "name_en": "tomato",
+      "name_ar": "",
+      "quantity_estimate": 3,
+      "unit": "piece",
+      "state": "fresh",
+      "category": "vegetable",
+      "confidence": 0.92,
+      "inferred": false
+    },
+    {
+      "name_en": "eggs",
+      "name_ar": "",
+      "quantity_estimate": 6,
+      "unit": "piece",
+      "state": "fresh",
+      "category": "protein",
+      "confidence": 0.95,
+      "inferred": true
+    }
+  ],
+  "notes": "short notes if needed"
+}
+
+请现在输出 JSON。
+"""
 )
 
 

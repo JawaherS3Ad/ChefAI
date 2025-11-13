@@ -1,0 +1,139 @@
+{
+  "detected_ingredients": {
+    "used": [
+      {
+        "name_en": "tomato",
+        "name_ar": "طماطم",
+        "quantity_estimate": 5,
+        "unit": "piece",
+        "state": "fresh",
+        "category": "vegetable",
+        "confidence": 0.9,
+        "inferred": false
+      },
+      {
+        "name_en": "bell pepper",
+        "name_ar": "فلفل رومي",
+        "quantity_estimate": 3,
+        "unit": "piece",
+        "state": "fresh",
+        "category": "vegetable",
+        "confidence": 0.85,
+        "inferred": false
+      },
+      {
+        "name_en": "lettuce",
+        "name_ar": "خس",
+        "quantity_estimate": 1,
+        "unit": "bundle",
+        "state": "fresh",
+        "category": "vegetable",
+        "confidence": 0.8,
+        "inferred": false
+      },
+      {
+        "name_en": "cucumber",
+        "name_ar": "خيار",
+        "quantity_estimate": 2,
+        "unit": "piece",
+        "state": "fresh",
+        "category": "vegetable",
+        "confidence": 0.75,
+        "inferred": false
+      },
+      {
+        "name_en": "egg",
+        "name_ar": "بيض",
+        "quantity_estimate": 6,
+        "unit": "piece",
+        "state": "fresh",
+        "category": "protein",
+        "confidence": 0.9,
+        "inferred": true
+      },
+      {
+        "name_en": "chicken breast",
+        "name_ar": "chicken breast",
+        "quantity_estimate": 4,
+        "unit": "piece",
+        "state": "raw",
+        "category": "protein",
+        "confidence": 0.85,
+        "inferred": true
+      },
+      {
+        "name_en": "green beans",
+        "name_ar": "green beans",
+        "quantity_estimate": 1,
+        "unit": "bundle",
+        "state": "fresh",
+        "category": "vegetable",
+        "confidence": 0.7,
+        "inferred": false
+      },
+      {
+        "name_en": "peach",
+        "name_ar": "خوخ",
+        "quantity_estimate": 3,
+        "unit": "piece",
+        "state": "fresh",
+        "category": "fruit",
+        "confidence": 0.8,
+        "inferred": false
+      },
+      {
+        "name_en": "mango",
+        "name_ar": "mango",
+        "quantity_estimate": 2,
+        "unit": "piece",
+        "state": "fresh",
+        "category": "fruit",
+        "confidence": 0.75,
+        "inferred": false
+      },
+      {
+        "name_en": "yogurt",
+        "name_ar": "yogurt",
+        "quantity_estimate": 2,
+        "unit": "container",
+        "state": "fresh",
+        "category": "dairy",
+        "confidence": 0.8,
+        "inferred": true
+      }
+    ],
+    "uncertain": [],
+    "notes": "Some items are inferred due to packaging."
+  },
+  "preferences": {
+    "meal_type": "Dinner",
+    "time_limit": "30m",
+    "servings": 2,
+    "cuisines": [
+      "Saudi",
+      "Italian"
+    ]
+  },
+  "suggested_recipe": {
+    "recipe_name": "سلطة الطماطم والفلفل الرومي",
+    "ingredients_needed": [],
+    "preparation_steps": [
+      "نقوم بتنظيف الطماطم ونقطعها إلى مكعبات.",
+      "نقوم بتنظيف الفلفل الرومي ونقطعه إلى شرائح رفيعة.",
+      "نضع الطماطم والفلفل الرومي في وعاء كبير.",
+      "نضيف الخس المفروم إلى الوعاء.",
+      "نضيف الخيار المفروم إلى الوعاء.",
+      "نخلط المكونات جيدًا.",
+      "نضع السلطة في الثلاجة لمدة 10 دقائق قبل التقديم."
+    ],
+    "cooking_time_minutes": 10,
+    "cuisine_type": "Saudi"
+  },
+  "missing_items": [],
+  "shopping_suggestions": [],
+  "nutrition_info": null,
+  "meta": {
+    "confidence_threshold": 0.5,
+    "cache_saved_at": null
+  }
+}

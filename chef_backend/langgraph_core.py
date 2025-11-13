@@ -11,6 +11,8 @@ from .recipe_generator import generate_recipe
 from .shopping_integration import get_shopping_suggestions
 from .utils import parse_vision_json, normalize_ar_basic
 from .ontology import EN2AR, is_bucket, normalize_ar, UNIT_FALLBACK
+from .namefixer_agent import fix_ingredients_names
+
 
 # -----------------------------
 # 1) حالة النظام (مرنة/اختيارية المفاتيح)
@@ -176,17 +178,11 @@ def node_vision(state: ChefState) -> ChefState:
 
 def node_namefixer(state: ChefState) -> ChefState:
     print(f"🔹 [DEBUG] Executing node: node_namefixer")
-    """NameFixer خفيف: يضمن تعبئة العربية من EN2AR عند اللزوم."""
     parsed = parse_vision_json(state["vision_raw"])
     items = parsed.get("ingredients", []) or []
-    for it in items:
-        if not (it.get("name_ar") or "").strip():
-            en = (it.get("name_en") or "").strip().lower()
-            if en in EN2AR:
-                it["name_ar"] = EN2AR[en]
-            else:
-                it["name_ar"] = it.get("name_en") or ""
-    return {"ingredients_raw": items}
+    fixed = fix_ingredients_names(items)
+    return {"ingredients_raw": fixed}
+
 
 def node_prepare(state: ChefState) -> ChefState:
     print(f"🔹 [DEBUG] Executing node: node_prepare")

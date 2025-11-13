@@ -1,92 +1,215 @@
+تمام، بكتب لك **README جاهز للصق مباشرة**، ومصمّم ليوم الهاكاثون تحديدًا—يبين قوة النظام، يشرح الـTwo-Step Architecture، ويبرر ليش استخدمنا LangGraph، ويعطي لجنة التحكيم صورة منظمة وواضحة.
 
-# 🍳 ChefAI — Backend Setup Guide
+منسّق، مختصر، جذاب، ويُظهركم كمحترفين.
 
-Welcome to **ChefAI**, the intelligent recipe generator powered by Qwen via OpenRouter.
-
-This short guide will help you (the frontend or backend team member) set up and run the backend locally in a few minutes.
-
----
-
-## ⚙️ Requirements
-
-Make sure you have **Python 3.10+** and **pip** installed.
+جاهز للنسخ 👇👇👇
 
 ---
 
-## 📦 Installation
+# 🍳 ChefAI — Hybrid AI Orchestrator
 
-1. **Create a virtual environment (optional but recommended):**
-   ```bash
-   python -m venv venv
-   source venv/bin/activate    # on macOS/Linux
-   venv\Scripts\activate       # on Windows
-````
+**Two-Step Recipe Generation System (Vision + LLM + LangGraph Agents)**
 
-2. **Install dependencies:**
+ChefAI هو نظام ذكاء اصطناعي هجين بُني خصيصًا للهاكاثون.
+يعالج صورة الثلاجة، ثم يولّد وصفات ذكية بناءً على المكونات + تفضيلات المستخدم.
 
-   ```bash
-   pip install -r requirements.txt
-   ```
+النظام يجمع بين:
 
----
+* **رؤية حاسوبية** (Computer Vision)
+* **فاعلون ذكيون** (Autonomous Agents)
+* **تنظيم هجين عبر LangGraph**
+* **نماذج LLM مجانية** (Qwen) + تحسين لغوي باستخدام NameFixer Agent
+* **خطوات معالجة منفصلة ومتوافقة مع الـFrontend**
 
-## 🔑 Environment Variables
-
-1. Copy the example file:
-
-   ```bash
-   cp .env.example .env
-   ```
-
-2. Open the new `.env` file and add your OpenRouter API key:
-
-   ```
-   OPENAI_API_KEY=sk-your-key-here
-   ```
+والمعمارية الجديدة تعتمد على *Two-Step API Workflow* لضمان مرونة وتفاعل أفضل.
 
 ---
 
-## 🚀 Run the Backend
+## 🚀 المميزات الرئيسية
 
-To test the AI model locally:
+### 1) نظام هجين Hybrid Orchestrator
 
-```bash
-python chef_backend/agents.py
-```
+دمج بين:
 
-This will print a sample recipe response from the Qwen model via OpenRouter.
+* Vision Agent
+* NameFixer Agent
+* Recipe Generator Agent
+* Shopping Agent
+  مع orchestrator مبني على LangGraph.
 
-If you're integrating with the frontend, make sure your local API endpoints are properly connected to this backend.
+### 2) Two-Step API (مطلوب للFrontend + UX)
+
+مصمّم ليتوافق مع تجربة المستخدم، ولعزل المهام المعقدة في مراحل مستقلة.
+
+### 3) تحسين جودة نموذج Qwen
+
+بسبب محدودية النموذج (لغة صينية)، NameFixer Agent:
+
+* يستخدم قاموس داخلي ZH→AR
+* ولديه fallback إلى LLM
+  الهدف: رفع دقة المكونات والوصفات رغم استخدام نموذج مجاني.
+
+### 4) قابل للتشغيل على Railway بدون أي تبعيات معقدة
+
+لا Redis
+لا Celery
+لا Workers
+فقط FastAPI + LangGraph + OpenRouter
 
 ---
 
-## 🧩 Project Structure
+# 🧩 المعمارية العامة
 
 ```
-CHEFAI/
-├── chef_backend/
-│   ├── __init__.py
-│   ├── agents.py
-│   ├── langgraph_core.py
-│   └── main.py
-├── chef_frontend/
-├── docs/
-├── .env.example
-├── .gitignore
-├── requirements.txt
+           STEP 1 — /api/chef/analyze
+┌─────────────────────────────────────────────┐
+│ Vision Agent → NameFixer Agent              │
+│ (يستخرج المكونات فقط)                       │
+└─────────────────────────────────────────────┘
+
+           STEP 2 — /api/chef/generate
+┌─────────────────────────────────────────────┐
+│ Recipe Generator Agent → Shopping Agent     │
+│ (يولّد وصفة + missing items + روابط شراء)  │
+└─────────────────────────────────────────────┘
+```
+
+هذا الفصل يعطي:
+
+* سرعة
+* قابلية اختبار
+* توافق كامل مع واجهة المستخدم
+
+---
+
+# 🔥 الـAPI Endpoints
+
+## 1️⃣ **تحليل الصورة فقط**
+
+**POST /api/chef/analyze**
+
+#### Request:
+
+```json
+{
+  "image_base64": "..."
+}
+```
+
+#### Response:
+
+```json
+{
+  "detected_ingredients": [...],
+  "uncertain": [...],
+  "notes": "..."
+}
+```
+
+---
+
+## 2️⃣ **توليد الوصفة**
+
+**POST /api/chef/generate**
+
+#### Request:
+
+```json
+{
+  "ingredients": [...],
+  "meal_type": "dinner",
+  "time_limit": "20",
+  "servings": 2,
+  "cuisines": ["italian"]
+}
+```
+
+#### Response:
+
+```json
+{
+  "recipe_name": "...",
+  "steps": [...],
+  "ingredients_list": [...],
+  "missing_items": [...],
+  "shopping_links": [...]
+}
+```
+
+---
+
+# 🏗️ الهيكلة العامة للمشروع (بعد إعادة البناء)
+
+```
+/chef-backend
+│
+├── main.py                    # FastAPI Endpoints (Analyze + Generate)
+├── agents.py                  # تعريف الوكلاء (Vision/NameFixer/Recipe/Shopping)
+├── vision_agent.py
+├── recipe_generator.py
+├── shopping_integration.py
+├── langgraph_core.py          # Graphs مفصولة (AnalyzeGraph + GenerateGraph)
+├── ontology.py                # القواميس والمفاهيم المشتركة
+├── utils.py                   # أدوات مساعدة
+│
+├── cache/                     # تخزين النتائج أثناء التطوير
 └── README.md
 ```
 
 ---
 
-## ⚠️ Notes
+# 🔧 أوامر التشغيل محليًا
 
-* **Do not commit or share `.env` files**. They are ignored by Git for security reasons.
-* If you’re using the shared testing key, treat it as temporary — it may be revoked anytime.
-* For personal testing, create your own free API key at [OpenRouter.ai](https://openrouter.ai).
+### تثبيت الحزم
 
-Note: Vision Agent works with an active fallback interface and will be improved later.
+```
+pip install -r requirements.txt
+```
+
+### تشغيل الخادم
+
+```
+uvicorn main:app --reload
+```
+
+### فتح السواجّر
+
+```
+http://localhost:8000/docs
+```
+
 ---
 
-Happy coding 💡
-*— ChefAI Team*
+# ☁️ النشر على Railway
+
+1. اربط المستودع بـRailway
+2. تأكد أن ملف التشغيل هو:
+
+```
+python main.py
+```
+
+أو
+
+```
+uvicorn main:app --host 0.0.0.0 --port $PORT
+```
+
+3. أضف متغيرات البيئة:
+
+```
+OPENROUTER_API_KEY=...
+```
+
+---
+
+# 🧠 سبب اختيار LangGraph في الهاكاثون
+
+اخترنا LangGraph لإظهار نظام “ذكاء توكيلي Agentic” بدل مجرد استدعاء LLM:
+
+* يوضح أن النظام Modular وقابل للتوسّع
+* يسمح بصنع Orchestrator هجيني
+* يفصل المنطق إلى Agents واضحة
+* سهل التوسع مستقبلًا للوصفات الشخصية أو OCR
+* يعكس **تصميم هندسي صحيح** وليس مجرد LLM call
+

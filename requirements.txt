@@ -7,10 +7,8 @@ langchain-community
 # --- Utilities & environment ---
 python-dotenv
 pydantic
-
-# --- Optional: if your code uses FastAPI or Flask for backend (keep one only) ---
-# fastapi
-# uvicorn
-
-# --- Developer utilities (optional but helpful) ---
 requests
+
+# --- Backend framework ---
+fastapi
+uvicorn

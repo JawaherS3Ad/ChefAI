@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: chefai
+    env: python
+    region: singapore  # أو region الأقرب لكِ، مثل oregon / frankfurt
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn chef_backend.main:app --host 0.0.0.0 --port 10000
+    plan: free
+    envVars:
+      - key: OPENAI_API_KEY
+        sync: false
+      - key: OPENROUTER_API_KEY
+        sync: false
+      - key: NAMEFIXER_MODEL
+        value: qwen/qwen-2.5-72b-instruct:free

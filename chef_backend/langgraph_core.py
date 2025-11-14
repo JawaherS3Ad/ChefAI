@@ -132,15 +132,32 @@ def _estimate_missing(available_used, recipe_ingredients):
 # ---------- A) Vision
 def node_vision(state: ChefState) -> ChefState:
     print("🔹 [INFO] node_vision")
+
     try:
         raw = analyze_image_api(state["image_base64"], state.get("session_id"))
     except Exception as e:
-        return {"error": f"فشل تحليل الصورة: {e}"}
+        # في حالة سقوط VisionAgent بالكامل
+        return {
+            "vision_raw": {"ingredients": [], "notes": "Vision crashed"},
+            "error": f"فشل تحليل الصورة: {e}"
+        }
 
-    if not raw or not raw.get("ingredients"):
-        return {"error": "لم يتم اكتشاف أي مكونات في الصورة."}
+    # raw قد يحتوي دائمًا ingredients + notes بسبب adapters
+    # لكن حتى لو ingredients = []، هذا لا يعتبر خطأ
+    if not isinstance(raw, dict):
+        return {
+            "vision_raw": {"ingredients": [], "notes": "Invalid vision output"},
+            "error": "خرج غير صالح من نموذج الرؤية."
+        }
 
+    # تأكيد وجود الحقول الأساسية
+    raw.setdefault("ingredients", [])
+    raw.setdefault("notes", "")
+
+    # لا نعتبر "no ingredients detected" خطأ
+    # فقط نُسجله لاحقًا في assemble
     return {"vision_raw": raw}
+
 
 
 # ---------- B) NameFixer
@@ -156,7 +173,7 @@ def node_namefixer(state: ChefState) -> ChefState:
 def node_prepare_analysis(state: ChefState) -> ChefState:
     print("🔹 [INFO] node_prepare_analysis")
 
-    items_clean = _sanitize_items(state["ingredients_raw"])
+    items_clean = _sanitize_items(state.get("ingredients_raw", []))
     used, uncertain = _split_used_uncertain(items_clean, CONFIDENCE_THRESHOLD)
 
     if len(used) < 1 and uncertain:
@@ -228,13 +245,21 @@ def node_assemble_analyze(state: ChefState) -> ChefState:
     if state.get("error"):
         return {"final_payload": {"error": state["error"]}}
 
+    used = state.get("used_items", [])
+    uncertain = state.get("uncertain_items", [])
+
+    notes = "Image analyzed successfully."
+    if not used:
+        notes = "لم يتم اكتشاف أي مكونات في الصورة."
+
     return {
         "final_payload": {
-            "detected_ingredients": state.get("used_items", []),
-            "uncertain": state.get("uncertain_items", []),
-            "notes": "Image analyzed successfully."
+            "detected_ingredients": used,
+            "uncertain": uncertain,
+            "notes": notes
         }
     }
+
 
 
 # ---------- H) Final assembly Step2

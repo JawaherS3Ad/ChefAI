@@ -1,151 +1,165 @@
+# -*- coding: utf-8 -*-
+"""
+Recipe Generator Agent (Step2 — LLM Generator Only)
+--------------------------------------------------
+هذا الملف مسؤول حصرياً عن توليد الوصفات.
+LangGraph يقوم بجميع الـ orchestration الخارجي.
+
+وظائف هذا الوكيل:
+1. استقبال ingredients + preferences + policy.
+2. استخدام max_cooking_minutes الجاهزة من LangGraph (وليس من UI).
+3. بناء برومبت ذكي ومتغير.
+4. توليد JSON مطابق لـ SuggestedRecipe عبر سلسلة Qwen (fallback).
+"""
+
 import os
 import json
 from dotenv import load_dotenv
+
 load_dotenv()
 
-from langchain_core.messages import HumanMessage
-from langchain_core.prompts import PromptTemplate
 from pydantic import BaseModel, Field
 from langchain_openai import ChatOpenAI
+from langchain_core.messages import HumanMessage
+from langchain_core.prompts import PromptTemplate
 
-# -------------------------
-# 1. إعداد النموذج من OpenRouter (Qwen)
-# -------------------------
 
+# -------------------------------------------------------------
+# 1) Priority Model List (Fallback)
+# -------------------------------------------------------------
 QWEN_MODELS_PRIORITY = [
     "qwen/qwen3-30b-a3b:free",
     "qwen/qwen3-14b:free",
     "qwen/qwen3-4b:free",
 ]
 
+
 def make_llm(model_name: str) -> ChatOpenAI:
-    """
-    إنشاء نموذج Qwen مع ضبط معلمات أكثر استقرارًا.
-    """
+    """تهيئة LLM للاستخدام مع OpenRouter."""
     return ChatOpenAI(
         model=model_name,
         openai_api_base="https://openrouter.ai/api/v1",
         openai_api_key=os.environ["OPENAI_API_KEY"],
-        max_tokens=700,       # 🔸 الحد الأقصى للإخراج لتفادي LengthFinishReasonError
-        temperature=0.3,      # 🔸 تنويع بسيط بدون خروج عن الواقعية
-        response_format={"type": "json_object"}  # 🔸 يطلب JSON صِرف بدل نص حر
+        max_tokens=700,
+        temperature=0.3,
+        response_format={"type": "json_object"},  # خروج JSON حصراً
     )
 
 
-# -------------------------
-# 2. نموذج الإخراج
-# -------------------------
+# -------------------------------------------------------------
+# 2) SuggestedRecipe Schema
+# -------------------------------------------------------------
 class SuggestedRecipe(BaseModel):
-    recipe_name: str = Field(description="اسم الوصفة المقترحة.")
-    ingredients_needed: list[str] = Field(description="قائمة بجميع المكونات المطلوبة (الموجودة في الصورة وغير الموجودة).")
-    preparation_steps: list[str] = Field(description="خطوات التحضير بالتفصيل.")
-    cooking_time_minutes: int = Field(description="مدة الطهي بالدقائق.")
-    cuisine_type: str = Field(description="نوع المطبخ (مثلاً: عربي، إيطالي، آسيوي).")
+    recipe_name: str = Field(description="اسم الوصفة.")
+    ingredients_needed: list[str] = Field(description="المكونات المطلوبة.")
+    preparation_steps: list[str] = Field(description="خطوات التحضير.")
+    cooking_time_minutes: int = Field(description="مدة الطبخ بالدقائق.")
+    cuisine_type: str = Field(description="نوع المطبخ.")
+
 
 def get_llm_with_schema(model_name: str):
-    llm = make_llm(model_name)
-    return llm.with_structured_output(SuggestedRecipe)
+    return make_llm(model_name).with_structured_output(SuggestedRecipe)
 
-# -------------------------
-# 3. برومبت ذكي يعتمد على المكونات + التفضيلات + السياسات
-# -------------------------
+
+# -------------------------------------------------------------
+# 3) Intelligent Prompt Template
+# -------------------------------------------------------------
 prompt = PromptTemplate(
-    input_variables=["ingredients_json", "preferences_json", "policy_json"],
+    input_variables=[
+        "ingredients_json",
+        "preferences_json",
+        "policy_json",
+        "max_minutes",
+    ],
     template=(
-        "You are a precise Arabic culinary assistant. Output strictly as the provided Pydantic schema.\n\n"
-        "AVAILABLE INGREDIENTS (JSON):\n{ingredients_json}\n\n"
-        "USER PREFERENCES (JSON):\n{preferences_json}\n\n"
-        "POLICY RULES (JSON):\n{policy_json}\n\n"
-        "CRITICAL RULES:\n"
-        "1) Ingredient Usage:\n"
-        "   - Use only available ingredients as much as possible.\n"
-        "   - If you must add missing items, keep them minimal and justified; list them under 'ingredients_needed'.\n"
-        "   - NEVER use generic/vague names like 'mixed vegetables', 'frozen vegetables', 'assorted sauces', 'frozen meats', 'pre-cut vegetables'.\n"
-        "   - Do NOT introduce 'sauce' as a generic item unless a specific sauce exists in the available list (e.g., 'صلصة طماطم').\n\n"
-        "2) Dough Policy:\n"
-        "   - If policy.forbid_generic_dough is true and policy.require_baking_basics_for_dough is false:\n"
-        "     do NOT propose recipes requiring generic 'dough' unless flour + water + yeast are explicitly available.\n\n"
-        "3) Lettuce & Cucumber:\n"
-        "   - NEVER cook lettuce (خس) or cucumber (خيار) on heat. Use them only raw/cold (salads, garnish), unless explicitly requested.\n\n"
-        "4) Constraints:\n"
-        "   - Respect time constraints, meal type, and servings.\n\n"
-        "5) Output Format:\n"
-        "   - Return ALL text fields in Arabic.\n"
-        "   - Follow the SuggestedRecipe Pydantic schema EXACTLY.\n"
-        "   - Be realistic with times and steps.\n"
+        "أنت مساعد طبخ عربي محترف.\n"
+        "مهمتك إنشاء وصفة مطابقة تماماً للـPydantic Schema.\n\n"
+
+        "المكونات المتاحة (JSON):\n{ingredients_json}\n\n"
+        "تفضيلات المستخدم:\n{preferences_json}\n\n"
+        "السياسات:\n{policy_json}\n\n"
+
+        "الحد الأقصى المسموح لوقت الطهي هو: {max_minutes} دقيقة.\n"
+        "يجب أن تكون الوصفة قابلة للطهي خلال هذا الوقت فعلياً.\n\n"
+
+        "قوانين صارمة:\n"
+        "• لا تستخدم مكونات غير متوفرة إلا عند الضرورة القصوى.\n"
+        "• المكونات الناقصة تُضاف في ingredients_needed.\n"
+        "• ممنوع استخدام أسماء عامة مثل: mixed vegetables / sauces / frozen meats.\n"
+        "• الخس والخيار لا يتم طبخهما مطلقاً.\n"
+        "• يجب احترام الوقت ونوع الوجبة وعدد الحصص.\n"
+        "• الإخراج يجب أن يكون بالعربية تماماً.\n"
+        "• الالتزام الكامل بشكل SuggestedRecipe.\n"
     ),
 )
 
 
-# -------------------------
-# 4. توليد الوصفة مع Fallback (✅ مُصلَح)
-# -------------------------
-def generate_recipe(payload: dict):
+# -------------------------------------------------------------
+# 4) Main Generation Function
+# -------------------------------------------------------------
+def generate_recipe(payload: dict) -> SuggestedRecipe:
     """
-    يحوّل المكونات + التفضيلات + السياسات إلى وصفة منظمة.
-    
-    Args:
-        payload: dict يحتوي على {ingredients, preferences, policy}
-    
-    Returns:
-        كائن SuggestedRecipe
+    توليد وصفة كاملة باستخدام Qwen:
+    - ingredients: أسماء عربية موحدة ومؤكدّة
+    - preferences: meal_type، time_limit، cuisines ...
+    - policy: تحتوي على max_cooking_minutes
     """
-    # استخراج البيانات من payload
-    ingredients_json = payload.get("ingredients", [])
-    preferences_json = payload.get("preferences", {})
-    policy_json = payload.get("policy", {})
-    
-    # تحويلها إلى JSON strings
-    ingredients_str = json.dumps(ingredients_json, ensure_ascii=False)
-    preferences_str = json.dumps(preferences_json, ensure_ascii=False)
-    policy_str = json.dumps(policy_json, ensure_ascii=False)
 
-    # بناء الرسالة
-    messages = [HumanMessage(content=prompt.format(
-        ingredients_json=ingredients_str,
-        preferences_json=preferences_str,
-        policy_json=policy_str
-    ))]
+    ingredients_json = json.dumps(payload.get("ingredients", []), ensure_ascii=False)
+    preferences_json = json.dumps(payload.get("preferences", {}), ensure_ascii=False)
+    policy_json = json.dumps(payload.get("policy", {}), ensure_ascii=False)
 
-    # محاولة التوليد مع fallback
+    # 🔥 هذه النقطة كانت الخلل
+    max_minutes = payload.get("policy", {}).get("max_cooking_minutes", 30)
+
+    message = HumanMessage(
+        content=prompt.format(
+            ingredients_json=ingredients_json,
+            preferences_json=preferences_json,
+            policy_json=policy_json,
+            max_minutes=max_minutes,
+        )
+    )
+
     last_error = None
+
+    # سلسلة fallback
     for model_name in QWEN_MODELS_PRIORITY:
         try:
-            llm_with_tools = get_llm_with_schema(model_name)
-            return llm_with_tools.invoke(messages)
+            llm = get_llm_with_schema(model_name)
+            return llm.invoke([message])
+
         except Exception as e:
-            text = str(e).lower()
-            if any(x in text for x in ("429", "rate", "temporarily", "provider returned error")):
+            # Rate-limit → ننتقل للنموذج التالي
+            if "429" in str(e) or "rate" in str(e).lower():
                 last_error = e
                 continue
             raise
-    raise RuntimeError(f"All Qwen fallback models failed. Last error: {last_error}")
+
+    raise RuntimeError(f"All Qwen models failed. Last error: {last_error}")
 
 
-# -------------------------
-# 5. اختبار بسيط (✅ محدّث)
-# -------------------------
+# -------------------------------------------------------------
+# 5) Local Test
+# -------------------------------------------------------------
 if __name__ == "__main__":
-    # بناء payload كامل مع policy
     sample_payload = {
         "ingredients": [
-            {"name_ar": "طماطم", "quantity_estimate": 3, "unit": "حبة", "state": "طازج"},
-            {"name_ar": "بيض", "quantity_estimate": 4, "unit": "حبة", "state": "طازج"},
+            {"name_ar": "بيض", "quantity_estimate": 2},
+            {"name_ar": "طماطم", "quantity_estimate": 1},
         ],
         "preferences": {
             "meal_type": "Dinner",
-            "time_limit": "30m",
-            "servings": 2,
-            "cuisines": ["Saudi", "Italian"]
+            "cuisines": ["Arabic"],
+            "servings": 1,
         },
         "policy": {
+            "max_cooking_minutes": 15,
             "forbid_generic_dough": True,
             "require_baking_basics_for_dough": False,
             "max_missing": 3,
-            "time_limit": "30m"
-        }
+        },
     }
 
-    print("🔸 اختبار توليد وصفة من payload كامل...\n")
     result = generate_recipe(sample_payload)
     print(json.dumps(result.model_dump(), indent=2, ensure_ascii=False))

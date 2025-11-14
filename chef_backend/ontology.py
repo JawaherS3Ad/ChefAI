@@ -1,25 +1,42 @@
 # -*- coding: utf-8 -*-
 # قواميس وتطبيع أسماء
 
-# عناصر عامة ممنوعة (نحذفها أو نحاول تفصيلها لاحقًا)
+# ------------------------------------------------------------
+# 1) Banned Buckets (نستبعدها من Step1)
+# ------------------------------------------------------------
 BANNED_BUCKETS_EN = {
-    "mixed vegetables", "cut vegetables", "frozen vegetables",
-    "mixed fruits", "frozen meats", "sauces"
+    "mixed vegetables",
+    "cut vegetables",
+    "frozen vegetables",
+    "mixed fruits",
+    "frozen meats",
+    "sauces",
 }
-BANNED_BUCKETS_AR = {"خضروات متنوعة", "خضروات مقطعة", "خضروات مجمدة", "فواكه متنوعة", "لحوم مجمدة", "صلصات"}
 
-# مرادفات عربية → شكل موحّد
+BANNED_BUCKETS_AR = {
+    "خضروات متنوعة",
+    "خضروات مقطعة",
+    "خضروات مجمدة",
+    "فواكه متنوعة",
+    "لحوم مجمدة",
+    "صلصات",
+}
+
+
+# ------------------------------------------------------------
+# 2) Arabic Normalization
+# ------------------------------------------------------------
 AR_NORMALIZE = {
     "بندورة": "طماطم",
     "فليفلة": "فلفل رومي",
-    "فلفل": "فلفل رومي",  # ممكن تخصيص لاحقًا (أخضر/أحمر) حسب الرؤية
+    "فلفل": "فلفل رومي",   # سيعالج لاحقًا إن أردتم فصل ألوان الفلفل
     "كوسا": "كوسة",
 }
 
-# إنجليزي → عربي (أساسي للدعم لما name_ar="")
-# -*- coding: utf-8 -*-
-# قاموس ثنائي اللغة: إنجليزي وصيني إلى عربي
 
+# ------------------------------------------------------------
+# 3) English → Arabic Dictionary
+# ------------------------------------------------------------
 EN2AR = {
     "tomato": "طماطم",
     "onion": "بصل",
@@ -66,9 +83,13 @@ EN2AR = {
     "chili pepper": "فلفل حار",
     "tomato sauce": "صلصة طماطم",
     "garlic powder": "بودرة ثوم",
-    "onion powder": "بودرة بصل"
+    "onion powder": "بودرة بصل",
 }
 
+
+# ------------------------------------------------------------
+# 4) Chinese → Arabic Dictionary
+# ------------------------------------------------------------
 ZH2AR = {
     "番茄": "طماطم",
     "洋葱": "بصل",
@@ -109,29 +130,63 @@ ZH2AR = {
     "面粉": "دقيق",
 }
 
+
+# ------------------------------------------------------------
+# lookup_to_ar — أفضل Lookup للصيني ثم الإنجليزي
+# ------------------------------------------------------------
 def lookup_to_ar(name_en: str = "", name_zh: str = "", fallback: str = "") -> str:
     """
-    يحوّل اسم (EN أو ZH) إلى عربي باستخدام القواميس.
-    - يجرّب EN2AR أولاً
-    - ثم ZH2AR
-    - وإلا يرجّع fallback (أو الاسم نفسه)
+    يحوّل اسم (صيني أو إنجليزي) إلى عربي باستخدام القواميس.
+    - يحاول ZH2AR أولاً لأن النموذج يعيد صيني غالبًا
+    - ثم EN2AR
+    - وإن فشل → fallback
     """
-    ne = (name_en or "").strip().lower()
-    nz = (name_zh or "").strip()
-    if ne and ne in EN2AR:
-        return EN2AR[ne]
-    if nz and nz in ZH2AR:
-        return ZH2AR[nz]
-    return (fallback or name_en or name_zh or "").strip()
 
-# وحدات عربية مقترحة
+    ne = (name_en or "").strip().lower()
+    nz = (name_zh or name_en or "").strip()
+
+    # Chinese priority
+    if nz in ZH2AR:
+        return ZH2AR[nz]
+
+    # English
+    if ne in EN2AR:
+        return EN2AR[ne]
+
+    # Fallback
+    return fallback or name_en or name_zh or ""
+
+
+# ------------------------------------------------------------
+# Unit fallback
+# ------------------------------------------------------------
 UNIT_FALLBACK = "حبة"
 
+
+# ------------------------------------------------------------
+# Bucket detection
+# ------------------------------------------------------------
 def is_bucket(name_en: str, name_ar: str) -> bool:
+    """
+    تحديد إن كان العنصر "سلة عامة" غير مفيدة.
+    """
     ne = (name_en or "").strip().lower()
     na = (name_ar or "").strip()
+
     return ne in BANNED_BUCKETS_EN or na in BANNED_BUCKETS_AR
 
+
+# ------------------------------------------------------------
+# Arabic normalization
+# ------------------------------------------------------------
 def normalize_ar(name_ar: str) -> str:
+    """
+    تطبيع بسيط للأسماء العربية إلى شكل موحّد.
+    """
     base = (name_ar or "").strip()
-    return AR_NORMALIZE.get(base, base)
+
+    # لو الاسم ضمن AR_NORMALIZE → رجّع النسخة الموحدة
+    if base in AR_NORMALIZE:
+        return AR_NORMALIZE[base]
+
+    return base

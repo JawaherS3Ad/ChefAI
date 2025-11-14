@@ -1,110 +1,129 @@
 # -*- coding: utf-8 -*-
 """
-namefixer_agent: يعالج أسماء المكونات بين الرؤية والوصفة.
-المنطق:
-- جرّب القواميس (EN2AR + ZH2AR)
-- إذا ما وجد ترجمة عربية، استخدم LLM للترجمة (اختياري، يعتمد على توفر المفاتيح)
-- يعيد قائمة عناصر محدثة مع name_ar موحّد
+namefixer_agent:
+-----------------
+وكيل متخصص في توحيد أسماء المكونات القادمة من Vision Agent.
+
+المهام:
+1. استخدام القواميس: EN2AR + ZH2AR (عبر lookup_to_ar)
+2. إذا لم تتوفر نتيجة → استخدام LLM للترجمة (اختياري)
+3. تنظيف وتطبيع name_ar
+4. إضافة metadata: _translated_by = dict / llm / passthrough / bucket
+
+هذا الوكيل يعمل فقط داخل Step1 Orchestrator.
 """
 
 import os
 from typing import List, Dict, Any
 
-# نفس الـLLM المستخدمين عندكم (LangChain واجهة موحدة)
+from langchain_core.messages import HumanMessage
+
+# LLM (اختياري)
 try:
     from langchain_openai import ChatOpenAI
 except Exception:
-    ChatOpenAI = None  # لو غير متاح، نشتغل قاموس فقط
+    ChatOpenAI = None
 
+# أدوات وبيانات
 from .ontology import lookup_to_ar, is_bucket, normalize_ar
-from .utils import normalize_ar_basic  # دالة تنظيف بسيطة لو عندكم
+from .utils import normalize_ar_basic
 
-# إعدادات اختيارية للنموذج
-NAMEFIXER_MODEL = os.getenv("NAMEFIXER_MODEL", "qwen/qwen-2.5-72b-instruct:free")  # غيّرها لو تبغى Qwen عبر OpenRouter
+# إعدادات عامة
+NAMEFIXER_MODEL = os.getenv("NAMEFIXER_MODEL", "qwen/qwen-2.5-72b-instruct:free")
 LLM_ENABLED = bool(os.getenv("OPENAI_API_KEY") or os.getenv("OPENROUTER_API_KEY"))
 
 _llm_client = None
+
+
+# -------------------------------------------------------------
+#  تهيئة LLM
+# -------------------------------------------------------------
 def _get_llm():
+    """تهيئة LLM واحد فقط (Singleton)"""
     global _llm_client
     if _llm_client is None and ChatOpenAI is not None and LLM_ENABLED:
-        _llm_client = ChatOpenAI(model=NAMEFIXER_MODEL, temperature=0)
+        _llm_client = ChatOpenAI(
+            model=NAMEFIXER_MODEL,
+            temperature=0,
+            openai_api_base="https://openrouter.ai/api/v1",
+            openai_api_key=os.getenv("OPENAI_API_KEY") or os.getenv("OPENROUTER_API_KEY")
+        )
     return _llm_client
 
+
 def _translate_with_llm(name: str) -> str:
+    """ترجمة احترافية عبر LLM في حال فشل القواميس."""
+
     llm = _get_llm()
     if not llm:
-        return name  # بدون LLM نعيد الاسم كما هو (سيُعالَج لاحقًا)
-    prompt = f"""
-أنت وكيل لغوي متخصص في ترجمة مكونات الطعام العالمية إلى العربية الفصحى.
+        return name
 
-🎯 الهدف:
-تحويل أسماء المكونات التي تأتي من أنظمة رؤية (مثل "Vision Agent") إلى اسم عربي واضح،
-مختصر، ودقيق من الناحية الغذائية.
-
-⚙️ القواعد الإلزامية:
-1. ترجم الاسم فقط إلى العربية الفصحى، بدون أي شرح أو توضيح إضافي.
-2. لا تستخدم transliteration (لا تكتب الحروف الأجنبية بالعربية).
-3. إذا الاسم بالصيني أو بالإنجليزية، فترجمه مباشرة إلى مكافئه العربي المعروف.
-4. لا تضف أي رموز أو أقواس أو معاني فرعية.
-5. الناتج يجب أن يكون كلمة واحدة أو كلمتين كحد أقصى (مثل "صدر دجاج" أو "فلفل رومي").
-6. لو لم تعرف المعنى إطلاقًا، أعد الكلمة كما هي بدون تغيير.
-
-📦 مثال:
-输入 (input): "鸡蛋"
-输出 (output): "بيض"
-
-输入 (input): "green beans"
-输出 (output): "فاصوليا خضراء"
-
-输入 (input): "cheddar cheese"
-输出 (output): "جبن شيدر"
-
-الاسم المطلوب ترجمته: {name}
-"""
+    prompt = (
+        "ترجم اسم المكون التالي من أي لغة (إنجليزي/صيني) إلى العربية الفصحى فقط.\n"
+        "بدون شرح، بدون تنسيق، بدون transliteration.\n"
+        f"الاسم المطلوب ترجمته: {name}"
+    )
 
     try:
-        resp = llm.invoke(prompt)
-        text = (getattr(resp, "content", None) or "").strip()
-        return text or name
+        response = llm.invoke([HumanMessage(content=prompt)])
+        out = (getattr(response, "content", None) or "").strip()
+        return out or name
     except Exception:
         return name
 
+
+# -------------------------------------------------------------
+#  معالجة عنصر واحد
+# -------------------------------------------------------------
 def _fix_single_item(item: Dict[str, Any]) -> Dict[str, Any]:
-    # حقول متوقعة من vision: name_en / name_ar / name_zh (اختياري) / confidence
-    en = (item.get("name_en") or "").strip()
-    zh = (item.get("name_zh") or "").strip()
-    ar = (item.get("name_ar") or "").strip()
+    it = dict(item)
 
-    # 1) إن كان bucket عام، لا نترجم له (يُعالج لاحقًا)
+    en = (it.get("name_en") or "").strip()
+    zh = (it.get("name_zh") or en).strip()
+    ar = (it.get("name_ar") or "").strip()
+
+    # 1) bucket → نرجعه كما هو
     if is_bucket(en, ar):
-        return item
+        it["_translated_by"] = "bucket"
+        return it
 
-    # 2) إن كان name_ar موجود وواضح، طبّعه وأرجعه
+    # 2) إذا عربي جاهز
     if ar:
-        item["name_ar"] = normalize_ar(ar)
-        return item
+        it["name_ar"] = normalize_ar(ar)
+        it["_translated_by"] = "passthrough"
+        return it
 
-    # 3) جرّب lookup من القواميس (EN ثم ZH)
-    mapped = lookup_to_ar(name_en=en, name_zh=zh, fallback="")
+    # 3) جرّب قاموس lookup (يعتمد على EN2AR و ZH2AR)
+    mapped = lookup_to_ar(name_en=en, name_zh=zh, fallback=None)
     if mapped:
-        item["name_ar"] = normalize_ar(mapped)
-        item["_translated_by"] = "dict"  # ← هنا يوضح أن الترجمة جاءت من القاموس
-        return item
+        it["name_ar"] = normalize_ar(mapped)
+        it["_translated_by"] = "dict"
+        return it
 
-    # 4) لو ما وجد، جرّب LLM (إن متاح)
+    # 4) fallback LLM فقط لو فشل كل شيء
     guess = _translate_with_llm(en or zh)
-    item["name_ar"] = normalize_ar_basic(normalize_ar(guess))
-    item["_translated_by"] = "llm"  # ← هنا يوضح أن الترجمة جاءت من LLM
-    return item
+
+    # ✨ مهم: normalize_ar (وليس normalize_ar_basic)
+    # لأننا نريد اسمًا عربيًا طبيعيًا، وليس نسخة مبسّطة للمقارنة
+    it["name_ar"] = normalize_ar(guess)
+    it["_translated_by"] = "llm"
+    return it
 
 
+# -------------------------------------------------------------
+#  الواجهة الرئيسية
+# -------------------------------------------------------------
 def fix_ingredients_names(items: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
     """
-    يأخذ قائمة عناصر مثل:
-    [{"name_en": "...", "name_zh": "...", "name_ar": "", "confidence": 0.83}, ...]
-    ويعيدها مع name_ar ممتلئ ومطبّع قدر الإمكان.
+    يعالج قائمة عناصر Vision ويعيدها مع name_ar موحّد.
     """
     fixed = []
+
     for it in items or []:
+        # إن لم يوجد name_zh → نستخدم name_en (الذي أحياناً يحتوي صيني)
+        if "name_zh" not in it:
+            it["name_zh"] = it.get("name_en", "")
+
         fixed.append(_fix_single_item(dict(it)))
+
     return fixed

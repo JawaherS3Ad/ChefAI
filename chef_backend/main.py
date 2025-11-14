@@ -24,6 +24,7 @@ from chef_backend.langgraph_core import (
 # Utilities
 # ------------------------------------------------------------
 from chef_backend.utils import map_ui_time_to_minutes
+from chef_backend.utils import map_ui_time_to_minutes, map_servings
 
 # ------------------------------------------------------------
 # تخزين سيشنات Step1
@@ -162,7 +163,7 @@ async def generate_recipe_endpoint(req: GenerateRequest):
         "ingredients_raw": stored["ingredients"],   # نتائج Step1
         "preferences": {
             "meal_type": req.meal_type,
-            "servings": req.servings,
+            "servings": map_servings(req.servings),
             "cuisines": req.cuisines or [],
         },
         "policy": {

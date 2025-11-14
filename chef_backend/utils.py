@@ -92,3 +92,31 @@ def map_ui_time_to_minutes(time_limit: str | None) -> int:
 
     # fallback منطقي
     return 30
+
+# =====================================================================
+# 4) map_servings — تحويل نص الواجهة إلى رقم منطقي
+# =====================================================================
+def map_servings(ui_value: str | None) -> int:
+    """
+    يحوّل قيمة عدد الأشخاص القادمة من الواجهة إلى رقم.
+    
+    قيم الواجهة الحالية:
+        - "Only me"
+        - "2-3 Servings"
+        - "More than 5"
+    """
+    if not ui_value:
+        return 2  # default
+
+    t = ui_value.strip().lower()
+
+    if "only" in t:
+        return 1
+
+    if "2-3" in t or "2" in t:
+        return 2
+
+    if "more" in t or "5" in t:
+        return 5
+
+    return 2

@@ -96,27 +96,32 @@ def map_ui_time_to_minutes(time_limit: str | None) -> int:
 # =====================================================================
 # 4) map_servings — تحويل نص الواجهة إلى رقم منطقي
 # =====================================================================
-def map_servings(ui_value: str | None) -> int:
+def map_servings(ui_value):
     """
-    يحوّل قيمة عدد الأشخاص القادمة من الواجهة إلى رقم.
-    
-    قيم الواجهة الحالية:
-        - "Only me"
-        - "2-3 Servings"
-        - "More than 5"
+    يقبل القيم من الفرونت سواء كانت:
+    - رقم (2, 3, 4)
+    - أو نص ("2 people")
+    ويرجع قيمة servings رقمية متوافقة مع الباك.
     """
-    if not ui_value:
-        return 2  # default
 
+    if ui_value is None:
+        return None
+
+    # 🔥 إذا وصل رقم من الفرونت → نحوله لنص مثل "2 people"
+    if isinstance(ui_value, (int, float)):
+        ui_value = f"{int(ui_value)} people"
+
+    # الآن نضمن أن ui_value نص، ونكمل المنطق الأصلي
+    ui_value = str(ui_value)
     t = ui_value.strip().lower()
 
-    if "only" in t:
-        return 1
+    # المنطق الأصلي كما هو (لا نغيّره)
+    if t.isdigit():
+        return int(t)
 
-    if "2-3" in t or "2" in t:
-        return 2
+    # يحاول استخراج أرقام من نص مثل "serve 2", "for 3 people"
+    for token in t.split():
+        if token.isdigit():
+            return int(token)
 
-    if "more" in t or "5" in t:
-        return 5
-
-    return 2
+    return None

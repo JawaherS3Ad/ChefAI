@@ -1,208 +1,241 @@
+# 🍳 **ChefAI – Image-to-Recipe Agent System**
 
-# 🍳 ChefAI — Hybrid AI Orchestrator
+*A structured, production-ready recipe generation pipeline for AgentX Hackathon*
 
-**Two-Step Recipe Generation System (Vision + LLM + LangGraph Agents)**
+ChefAI is an agent-driven system designed to reduce food waste by transforming any fridge photo into a clean ingredient list and a personalized, cookable recipe.
+It combines **vision analysis**, **data cleaning**, and a **two-step orchestration pipeline** to ensure accuracy, speed, and reliable outcomes.
 
-ChefAI هو نظام ذكاء اصطناعي هجين بُني خصيصًا للهاكاثون.
-يعالج صورة الثلاجة، ثم يولّد وصفات ذكية بناءً على المكونات + تفضيلات المستخدم.
-
-النظام يجمع بين:
-
-* **رؤية حاسوبية** (Computer Vision)
-* **فاعلون ذكيون** (Autonomous Agents)
-* **تنظيم هجين عبر LangGraph**
-* **نماذج LLM مجانية** (Qwen) + تحسين لغوي باستخدام NameFixer Agent
-* **خطوات معالجة منفصلة ومتوافقة مع الـFrontend**
-
-والمعمارية الجديدة تعتمد على *Two-Step API Workflow* لضمان مرونة وتفاعل أفضل.
+This repository documents the **current working version**, and outlines the **planned upgrades for the final stage**.
 
 ---
 
-## 🚀 المميزات الرئيسية
+# 🚀 **Mission**
 
-### 1) نظام هجين Hybrid Orchestrator
+Help users cook with what they already have by:
 
-دمج بين:
+1. Understanding real ingredients from a fridge photo
+2. Cleaning & normalizing them
+3. Generating accurate, personalized recipes
+4. Suggesting missing ingredients *when needed*
 
-* Vision Agent
-* NameFixer Agent
-* Recipe Generator Agent
-* Shopping Agent
-  مع orchestrator مبني على LangGraph.
-
-### 2) Two-Step API (مطلوب للFrontend + UX)
-
-مصمّم ليتوافق مع تجربة المستخدم، ولعزل المهام المعقدة في مراحل مستقلة.
-
-### 3) تحسين جودة نموذج Qwen
-
-بسبب محدودية النموذج (لغة صينية)، NameFixer Agent:
-
-* يستخدم قاموس داخلي ZH→AR
-* ولديه fallback إلى LLM
-  الهدف: رفع دقة المكونات والوصفات رغم استخدام نموذج مجاني.
-
-### 4) قابل للتشغيل على Railway بدون أي تبعيات معقدة
-
-لا Redis
-لا Celery
-لا Workers
-فقط FastAPI + LangGraph + OpenRouter
+All while keeping the system lightweight, fast, and practical for real-world use.
 
 ---
 
-# 🧩 المعمارية العامة
+# 🧠 **Core Features (Current Version)**
 
-```
-           STEP 1 — /api/chef/analyze
-┌─────────────────────────────────────────────┐
-│ Vision Agent → NameFixer Agent              │
-│ (يستخرج المكونات فقط)                       │
-└─────────────────────────────────────────────┘
+### ✔️ **1. Vision Model (Qwen-VL)**
 
-           STEP 2 — /api/chef/generate
-┌─────────────────────────────────────────────┐
-│ Recipe Generator Agent → Shopping Agent     │
-│ (يولّد وصفة + missing items + روابط شراء)  │
-└─────────────────────────────────────────────┘
-```
+* Detects items from the fridge photo
+* Outputs strict structured JSON
+* Extracts up to ~10 edible ingredients
+* Works through OpenRouter API
 
-هذا الفصل يعطي:
+### ✔️ **2. Cleaning Layer**
 
-* سرعة
-* قابلية اختبار
-* توافق كامل مع واجهة المستخدم
+* Arabic/English normalization
+* Name fixing
+* Duplicate merging
+* Confidence filtering
+* Splits results into:
+
+  * *confirmed ingredients*
+  * *uncertain items*
+
+### ✔️ **3. Two-Step Pipeline (Analyze → Generate)**
+
+Separated for UX clarity and frontend integration:
+
+**Step 1:** `/api/chef/analyze`
+
+* Image → Vision Model → Cleaning Layer
+* Returns ingredient list only
+
+**Step 2:** `/api/chef/generate`
+
+* Uses Step1 ingredients + user preferences
+* Calls Recipe LLM
+* Returns full structured recipe
+
+### ✔️ **4. LangGraph Orchestrator**
+
+* Manages both steps
+* Ensures deterministic flow
+* Connects between agents cleanly
+
+### ✔️ **5. Recipe LLM**
+
+* Generates recipe name, steps, nutrition estimate
+* Uses available ingredients only
+* Respects preferences (time, cuisine, servings)
+* Produces clean JSON for frontend
+
+### ✔️ **6. Optional Shopping Agent**
+
+* Detects missing items
+* Suggests replacements
+
+### ✔️ **7. FastAPI Backend (Railway-Ready)**
+
+* Simple, stateless design
+* No Redis / No workers
+* Easy to deploy
+* session_id store for step linking
 
 ---
 
-# 🔥 الـAPI Endpoints
+# 🏗️ **Architecture Diagram (ASCII)**
 
-## 1️⃣ **تحليل الصورة فقط**
-
-**POST /api/chef/analyze**
-
-#### Request:
-
-```json
-{
-  "image_base64": "..."
-}
+```
+User (PWA)
+    ↓ POST /api/chef/analyze
+FastAPI Gateway
+    ↓ Image
+Vision Model (Qwen-VL)
+    ↓ Raw JSON
+Cleaning Layer
+    ↓ Clean Ingredients (stored in SESSION_STORE)
+-----------------------------------------------
+User Preferences
+    ↓ POST /api/chef/generate
+LangGraph Orchestrator
+    ↓ Recipe Request
+Recipe LLM
+    ↓ Final JSON
+Final User Output (PWA)
 ```
 
-#### Response:
+Optional:
 
-```json
-{
-  "detected_ingredients": [...],
-  "uncertain": [...],
-  "notes": "..."
-}
 ```
-
----
-
-## 2️⃣ **توليد الوصفة**
-
-**POST /api/chef/generate**
-
-#### Request:
-
-```json
-{
-  "ingredients": [...],
-  "meal_type": "dinner",
-  "time_limit": "20",
-  "servings": 2,
-  "cuisines": ["italian"]
-}
-```
-
-#### Response:
-
-```json
-{
-  "recipe_name": "...",
-  "steps": [...],
-  "ingredients_list": [...],
-  "missing_items": [...],
-  "shopping_links": [...]
-}
+          Clean Ingredients
+                 ↓
+     Shopping Agent (Optional)
+                 ↓
+         Missing Item Suggestions
 ```
 
 ---
 
-# 🏗️ الهيكلة العامة للمشروع (بعد إعادة البناء)
+# 📡 **API Endpoints**
+
+## **POST /api/chef/analyze**
+
+Input → Base64 Image
+Output → Clean ingredient list + uncertain list
+
+## **POST /api/chef/generate**
+
+Input → ingredients + preferences
+Output → Recipe JSON (steps, time, missing items…)
+
+---
+
+# 📂 **Project Structure**
 
 ```
 /chef-backend
 │
-├── main.py                    # FastAPI Endpoints (Analyze + Generate)
-├── agents.py                  # تعريف الوكلاء (Vision/NameFixer/Recipe/Shopping)
-├── vision_agent.py
-├── recipe_generator.py
-├── shopping_integration.py
-├── langgraph_core.py          # Graphs مفصولة (AnalyzeGraph + GenerateGraph)
-├── ontology.py                # القواميس والمفاهيم المشتركة
-├── utils.py                   # أدوات مساعدة
-│
-├── cache/                     # تخزين النتائج أثناء التطوير
-└── README.md
+├── main.py                  # FastAPI endpoints
+├── vision_agent.py          # Vision model logic
+├── namefixer_agent.py       # Normalization + fixing
+├── langgraph_core.py        # Step1 + Step2 graphs
+├── recipe_generator.py      # Calls Recipe LLM
+├── shopping_integration.py  # Optional agent
+├── utils.py                 # helpers
+├── constants.py             # shared configs
+└── requirements.txt
 ```
 
 ---
 
-# 🔧 أوامر التشغيل محليًا
-
-### تثبيت الحزم
+# ⚙️ **Running Locally**
 
 ```
 pip install -r requirements.txt
-```
-
-### تشغيل الخادم
-
-```
 uvicorn main:app --reload
 ```
 
-### فتح السواجّر
-
-```
-http://localhost:8000/docs
-```
+Swagger UI:
+`http://localhost:8000/docs`
 
 ---
 
-# ☁️ النشر على Railway
+# ☁️ **Deployment (Railway)**
 
-1. اربط المستودع بـRailway
-2. تأكد أن ملف التشغيل هو:
-
-```
-python main.py
-```
-
-أو
+* Connect GitHub repo
+* Add environment vars (OPENROUTER_API_KEY, etc.)
+* Start command:
 
 ```
 uvicorn main:app --host 0.0.0.0 --port $PORT
 ```
 
-3. أضف متغيرات البيئة:
+---
 
-```
-OPENROUTER_API_KEY=...
-```
+# 🧭 **What’s Done (Finalized for Round 1)**
+
+* Vision → Cleaning → LangGraph → Recipe LLM pipeline
+* Two-Step API ready for frontend
+* Deterministic JSON outputs
+* Basic shopping suggestions
+* Fully deployed FastAPI backend
+* Working PWA prototype (Lovable + team UI/UX)
 
 ---
 
-# 🧠 سبب اختيار LangGraph في الهاكاثون
+# 🔮 **Next Phase (Round 2 – Planned Upgrades)**
 
-اخترنا LangGraph لإظهار نظام “ذكاء توكيلي Agentic” بدل مجرد استدعاء LLM:
+These items will significantly boost accuracy, speed, and scoring:
 
-* يوضح أن النظام Modular وقابل للتوسّع
-* يسمح بصنع Orchestrator هجيني
-* يفصل المنطق إلى Agents واضحة
-* سهل التوسع مستقبلًا للوصفات الشخصية أو OCR
-* يعكس **تصميم هندسي صحيح** وليس مجرد LLM call
+### **1) Switch Vision to Gemini Flash / Pro-Vision**
 
+* Faster inference
+* Higher accuracy
+* Full Arabic support
+* Reduces errors in ingredient naming → removes need for heavy cleaning
+
+### **2) Add Specialized Agents**
+
+* CO₂ Impact Agent (estimate environmental impact per recipe)
+* Waste-Reduction Agent (calculate unused items)
+* Auto-Basket Agent (auto-generate market cart suggestions)
+
+### **3) Improve Performance**
+
+* Faster response by parallelizing steps
+* Lighter LLM prompts
+* More aggressive input validation
+
+### **4) UI Enhancements**
+
+* Cleaner PWA
+* Progress loader states
+* Better result presentation (photos, icons)
+
+### **5) Additional Data (Optional)**
+
+* Nutrition API
+* Price estimation for missing items
+* Diet filters
+
+---
+
+# 🎯 **Goal for Final Round**
+
+A fast, accurate, production-ready system that:
+
+* Understands real fridge photos
+* Produces reliable recipes
+* Reduces waste
+* Adds measurable value (CO₂, missing items, basket suggestions)
+
+And delivers a polished experience end-to-end.
+
+---
+
+# ✔️ **Status**
+
+This repository is the official reference for the team.
+
+---

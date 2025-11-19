@@ -1,16 +1,22 @@
-# --- Core LangChain ecosystem ---
+# --- LangChain + LangGraph ---
 langchain
-langchain-openai
 langchain-core
+langchain-openai
 langchain-community
+langgraph
 
-# --- Utilities & environment ---
-python-dotenv
+# --- Web Framework ---
+fastapi
+uvicorn[standard]
+python-multipart
+
+# --- Pydantic / Utils ---
 pydantic
-
-# --- Optional: if your code uses FastAPI or Flask for backend (keep one only) ---
-# fastapi
-# uvicorn
-
-# --- Developer utilities (optional but helpful) ---
+python-dotenv
 requests
+
+# --- Vision Agent Requirements ---
+Pillow
+
+# --- Optional but recommended ---
+tqdm

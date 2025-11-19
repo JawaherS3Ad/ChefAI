@@ -1,0 +1,150 @@
+{
+  "detected_ingredients": {
+    "used": [
+      {
+        "name_en": "tomato",
+        "name_ar": "طماطم",
+        "quantity_estimate": 5,
+        "unit": "piece",
+        "state": "fresh",
+        "category": "vegetable",
+        "confidence": 0.9,
+        "inferred": false,
+        "_translated_by": "dict"
+      },
+      {
+        "name_en": "lettuce",
+        "name_ar": "خس",
+        "quantity_estimate": 2,
+        "unit": "bundle",
+        "state": "fresh",
+        "category": "vegetable",
+        "confidence": 0.85,
+        "inferred": false,
+        "_translated_by": "dict"
+      },
+      {
+        "name_en": "bell pepper",
+        "name_ar": "فلفل رومي",
+        "quantity_estimate": 3,
+        "unit": "piece",
+        "state": "fresh",
+        "category": "vegetable",
+        "confidence": 0.8,
+        "inferred": false,
+        "_translated_by": "dict"
+      },
+      {
+        "name_en": "cucumber",
+        "name_ar": "خيار",
+        "quantity_estimate": 2,
+        "unit": "piece",
+        "state": "fresh",
+        "category": "vegetable",
+        "confidence": 0.75,
+        "inferred": false,
+        "_translated_by": "dict"
+      },
+      {
+        "name_en": "pepper",
+        "name_ar": "pepper",
+        "quantity_estimate": 4,
+        "unit": "piece",
+        "state": "fresh",
+        "category": "vegetable",
+        "confidence": 0.7,
+        "inferred": false,
+        "_translated_by": "dict"
+      },
+      {
+        "name_en": "eggs",
+        "name_ar": "eggs",
+        "quantity_estimate": 6,
+        "unit": "piece",
+        "state": "fresh",
+        "category": "protein",
+        "confidence": 0.9,
+        "inferred": false,
+        "_translated_by": "dict"
+      },
+      {
+        "name_en": "bread",
+        "name_ar": "خبز",
+        "quantity_estimate": 3,
+        "unit": "slice",
+        "state": "fresh",
+        "category": "starch",
+        "confidence": 0.8,
+        "inferred": false,
+        "_translated_by": "dict"
+      },
+      {
+        "name_en": "pasta",
+        "name_ar": "مكرونة",
+        "quantity_estimate": 2,
+        "unit": "bundle",
+        "state": "fresh",
+        "category": "starch",
+        "confidence": 0.7,
+        "inferred": false,
+        "_translated_by": "dict"
+      },
+      {
+        "name_en": "chicken",
+        "name_ar": "دجاج",
+        "quantity_estimate": 2,
+        "unit": "piece",
+        "state": "raw",
+        "category": "protein",
+        "confidence": 0.6,
+        "inferred": true,
+        "_translated_by": "dict"
+      },
+      {
+        "name_en": "pears",
+        "name_ar": "pears",
+        "quantity_estimate": 2,
+        "unit": "piece",
+        "state": "fresh",
+        "category": "fruit",
+        "confidence": 0.6,
+        "inferred": false,
+        "_translated_by": "dict"
+      }
+    ],
+    "uncertain": [],
+    "notes": ""
+  },
+  "preferences": {
+    "meal_type": "Dinner",
+    "time_limit": "30m",
+    "servings": 2,
+    "cuisines": [
+      "Saudi",
+      "Italian"
+    ]
+  },
+  "suggested_recipe": {
+    "recipe_name": "سَلَاطَة دَجَاجَة مَعْ خُبْزٍ وَ مَكْرُونَة",
+    "ingredients_needed": [],
+    "preparation_steps": [
+      "1. اغْسِلِ الخَسَّ وَ خِيارَ وَ طَمَاطِرَ بِجَيِّدٍ.",
+      "2. قَطِّعِ الخَسَّ وَ خِيارَ إِلَى شِرَائحٍ رَفِيعَةٍ.",
+      "3. قَطِّعِ الطَمَاطِرَ إِلَى مُسْتَطِيلَاتٍ صَغِيرَةٍ.",
+      "4. اَعْتَمِدْ عَلَى قَطَعَاتِ الدَجَاجَةِ الْمَقْطَعَةِ مُقَدَّمًا.",
+      "5. اَضْفِ الْمَكْرُونَةَ الْمَطْهِيَةَ إِلَى الْخَسَّ وَ خِيارَ وَ الطَمَاطِرَ.",
+      "6. اَضْفِ قَطَعَاتِ الدَجَاجَةِ إِلَى الْمَزَجَةِ.",
+      "7. قَمْ بِتَقْدِيمِ الْمَزَجَةِ مَعَ خُبْزٍ.",
+      "8. اَعْتَمِدْ عَلَى الْمَزَجَةِ لِتَقْدِيمِهَا فِي 2 أَحْمَالٍ."
+    ],
+    "cooking_time_minutes": 25,
+    "cuisine_type": "Saudi and Italian fusion"
+  },
+  "missing_items": [],
+  "shopping_suggestions": [],
+  "nutrition_info": null,
+  "meta": {
+    "confidence_threshold": 0.5,
+    "cache_saved_at": null
+  }
+}

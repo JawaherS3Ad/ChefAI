@@ -1,0 +1,70 @@
+{
+  "detected_ingredients": {
+    "used": [],
+    "uncertain": [],
+    "notes": "{\n  \"ingredients\": [\n    {\n      \"name_en\": \"tomato\",\n      \"name_ar\": \"\",\n      \"quantity_estimate\": 5,\n      \"unit\": \"piece\",\n      \"state\": \"fresh\",\n      \"category\": \"vegetable\",\n      \"confidence\": 0.9,\n      \"inferred\": false\n    },\n    {\n      \"name_en\": \"lettuce\",\n      \"name_ar\": \"\",\n      \"quantity_estimate\": 2,\n      \"unit\": \"bundle\",\n      \"state\": \"fresh\",\n      \"category\": \"vegetable\",\n      \"confidence\": 0.85,\n      \"inferred\": false\n    },\n    {\n      \"name_en\": \"bell pepper\",\n      \"name_ar\": \"\",\n      \"quantity_estimate\": 3,\n      \"unit\": \"piece\",\n      \"state\": \"fresh\",\n      \"category\": \"vegetable\",\n      \"confidence\": 0.8,\n      \"inferred\": false\n    },\n    {\n      \"name_en\": \"egg\",\n      \"name_ar\": \"\",\n      \"quantity_estimate\": 6,\n      \"unit\": \"piece\",\n      \"state\": \"fresh\",\n      \"category\": \"protein\",\n      \"confidence\": 0.9,\n      \"inferred\": true\n    },\n    {\n      \"name_en\": \"broccoli\",\n      \"name_ar\": \"\",\n      \"quantity_estimate\": 2,\n      \"unit\": \"piece\",\n      \"state\": \"fresh\",\n      \"category\": \"vegetable\",\n      \"confidence\": 0.85,\n      \"inferred\": false\n    },\n    {\n      \"name_en\": \"peach\",\n      \"name_ar\": \"\",\n      \"quantity_estimate\": 3,\n      \"unit\": \"piece\",\n      \"state\": \"fresh\",\n      \"category\": \"fruit\",\n      \"confidence\": 0.8,\n      \"inferred\": false\n    },\n    {\n      \"name_en\": \"pear\",\n      \"name_ar\": \"\",\n      \"quantity_estimate\": 2,\n      \"unit\": \"piece\",\n      \"state\": \"fresh\",\n      \"category\": \"fruit\",\n      \"confidence\": 0.75,\n      \"inferred\": false\n    },\n    {\n      \"name_en\": \"lemon\",\n      \"name_ar\": \"\",\n      \"quantity_estimate\": 1,\n      \"unit\": \"piece\",\n      \"state\": \"fresh\",\n      \"category\": \"fruit\",\n      \"confidence\": 0.8,\n      \"inferred\": false\n    },\n    {\n      \"name_en\": \"chicken breast\",\n      \"name_ar\": \"\",\n      \"quantity_estimate\": 4,\n      \"unit\": \"piece\",\n      \"state\": \"raw\",\n      \"category\": \"protein\",\n      \"confidence\": 0.7,\n      \"inferred\": true\n    },\n    {\n      \"name_en\": \"carrot\",\n      \"name_ar\": \"\",\n      \"quantity_estimate\": 4,\n      \"unit\": \"piece\",\n      \"state\": \"fresh\",\n      \"category\": \"vegetable\",\n      \"confidence\": 0"
+  },
+  "preferences": {
+    "meal_type": "Dinner",
+    "time_limit": "30m",
+    "servings": 2,
+    "cuisines": [
+      "Saudi",
+      "Italian"
+    ]
+  },
+  "suggested_recipe": {
+    "recipe_name": "كفتة بالطماطم والخيار",
+    "ingredients_needed": [
+      "كفتة",
+      "طماطم",
+      "خيار"
+    ],
+    "preparation_steps": [
+      "1. تُسخن مقلاة على نار متوسطة.",
+      "2. تُضاف كفتة إلى المقلاة وتشوى حتى تنضج.",
+      "3. تُقطع الطماطم والخيار إلى مكعبات.",
+      "4. تُضاف المكعبات إلى الكفتة في المقلاة.",
+      "5. تُطهى المكونات معًا لمدة 5 دقائق.",
+      "6. تُقدّم الكفتة مع الطماطم والخيار في طبق."
+    ],
+    "cooking_time_minutes": 15,
+    "cuisine_type": "Saudi"
+  },
+  "missing_items": [
+    "كفتة",
+    "طماطم",
+    "خيار"
+  ],
+  "shopping_suggestions": [
+    {
+      "item": "كفتة",
+      "quantity": 1,
+      "unit": "علبة",
+      "vendor": "HungryStation",
+      "estimated_price": "7.2 SAR",
+      "product_url": "https://hungerstation.com/search?q=%D9%83%D9%81%D8%AA%D8%A9"
+    },
+    {
+      "item": "طماطم",
+      "quantity": 1,
+      "unit": "علبة",
+      "vendor": "HungryStation",
+      "estimated_price": "14.7 SAR",
+      "product_url": "https://hungerstation.com/search?q=%D8%B7%D9%85%D8%A7%D8%B7%D9%85"
+    },
+    {
+      "item": "خيار",
+      "quantity": 1,
+      "unit": "علبة",
+      "vendor": "HungryStation",
+      "estimated_price": "12.18 SAR",
+      "product_url": "https://hungerstation.com/search?q=%D8%AE%D9%8A%D8%A7%D8%B1"
+    }
+  ],
+  "nutrition_info": null,
+  "meta": {
+    "confidence_threshold": 0.5,
+    "cache_saved_at": null
+  }
+}

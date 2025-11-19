@@ -1,0 +1,194 @@
+{
+  "detected_ingredients": {
+    "used": [
+      {
+        "name_en": "tomato",
+        "name_ar": "طماطم",
+        "quantity_estimate": 4,
+        "unit": "piece",
+        "state": "fresh",
+        "category": "vegetable",
+        "confidence": 0.95,
+        "inferred": false
+      },
+      {
+        "name_en": "bell pepper",
+        "name_ar": "bell pepper",
+        "quantity_estimate": 2,
+        "unit": "piece",
+        "state": "fresh",
+        "category": "vegetable",
+        "confidence": 0.9,
+        "inferred": false
+      },
+      {
+        "name_en": "lettuce",
+        "name_ar": "خس",
+        "quantity_estimate": 1,
+        "unit": "bundle",
+        "state": "fresh",
+        "category": "vegetable",
+        "confidence": 0.85,
+        "inferred": false
+      },
+      {
+        "name_en": "cucumber",
+        "name_ar": "خيار",
+        "quantity_estimate": 1,
+        "unit": "piece",
+        "state": "fresh",
+        "category": "vegetable",
+        "confidence": 0.8,
+        "inferred": false
+      },
+      {
+        "name_en": "pepper",
+        "name_ar": "pepper",
+        "quantity_estimate": 3,
+        "unit": "piece",
+        "state": "fresh",
+        "category": "vegetable",
+        "confidence": 0.75,
+        "inferred": false
+      },
+      {
+        "name_en": "eggs",
+        "name_ar": "eggs",
+        "quantity_estimate": 6,
+        "unit": "piece",
+        "state": "fresh",
+        "category": "protein",
+        "confidence": 0.9,
+        "inferred": true
+      },
+      {
+        "name_en": "chicken",
+        "name_ar": "chicken",
+        "quantity_estimate": 2,
+        "unit": "piece",
+        "state": "cooked",
+        "category": "protein",
+        "confidence": 0.85,
+        "inferred": true
+      },
+      {
+        "name_en": "pasta",
+        "name_ar": "pasta",
+        "quantity_estimate": 1,
+        "unit": "bundle",
+        "state": "cooked",
+        "category": "starch",
+        "confidence": 0.7,
+        "inferred": true
+      },
+      {
+        "name_en": "peach",
+        "name_ar": "peach",
+        "quantity_estimate": 2,
+        "unit": "piece",
+        "state": "fresh",
+        "category": "fruit",
+        "confidence": 0.8,
+        "inferred": false
+      },
+      {
+        "name_en": "pear",
+        "name_ar": "pear",
+        "quantity_estimate": 1,
+        "unit": "piece",
+        "state": "fresh",
+        "category": "fruit",
+        "confidence": 0.75,
+        "inferred": false
+      }
+    ],
+    "uncertain": [],
+    "notes": "Some items are inferred due to packaging."
+  },
+  "preferences": {
+    "meal_type": "Dinner",
+    "time_limit": "30m",
+    "servings": 2,
+    "cuisines": [
+      "Saudi",
+      "Italian"
+    ]
+  },
+  "suggested_recipe": {
+    "recipe_name": "أطباق خضروات مع دجاج",
+    "ingredients_needed": [
+      "طماطم (4 قطع)",
+      "فلفل بELL (2 قطع)",
+      "خس (1 حزمة)",
+      "خيار (1 قطعة)",
+      "فلفل (3 قطع)",
+      "بيض (6 قطع)",
+      "دجاج (2 قطعة)",
+      "معكرونة (1 حزمة)"
+    ],
+    "preparation_steps": [
+      "نُعدّ الدجاج بالطريقة المعتادة (مثل الشواء أو القلي).",
+      "نُعِدّ الخضروات: نُقطع الطماطم والفلفل والخيار إلى شرائح رفيعة.",
+      "نُعدّ خس إلى شرائح ناعمة.",
+      "نُعدّ المعكرونة بالطريقة المعتادة (مثل الغلي).",
+      "نُعدّ البيض بالطريقة المعتادة (مثل المخفوق أو المطهية).",
+      "نُجمع جميع المكونات معًا في طبق كبير."
+    ],
+    "cooking_time_minutes": 30,
+    "cuisine_type": "Saudi and Italian fusion"
+  },
+  "missing_items": [
+    "فلفل بELL (2 قطع)",
+    "فلفل (3 قطع)",
+    "بيض (6 قطع)",
+    "دجاج (2 قطعة)",
+    "معكرونة (1 حزمة)"
+  ],
+  "shopping_suggestions": [
+    {
+      "item": "فلفل بELL (2 قطع)",
+      "quantity": 1,
+      "unit": "علبة",
+      "vendor": "HungryStation",
+      "estimated_price": "7.44 SAR",
+      "product_url": "https://hungerstation.com/search?q=%D9%81%D9%84%D9%81%D9%84%20%D8%A8ELL%20%282%20%D9%82%D8%B7%D8%B9%29"
+    },
+    {
+      "item": "فلفل (3 قطع)",
+      "quantity": 1,
+      "unit": "علبة",
+      "vendor": "HungryStation",
+      "estimated_price": "12.08 SAR",
+      "product_url": "https://hungerstation.com/search?q=%D9%81%D9%84%D9%81%D9%84%20%283%20%D9%82%D8%B7%D8%B9%29"
+    },
+    {
+      "item": "بيض (6 قطع)",
+      "quantity": 1,
+      "unit": "علبة",
+      "vendor": "HungryStation",
+      "estimated_price": "7.12 SAR",
+      "product_url": "https://hungerstation.com/search?q=%D8%A8%D9%8A%D8%B6%20%286%20%D9%82%D8%B7%D8%B9%29"
+    },
+    {
+      "item": "دجاج (2 قطعة)",
+      "quantity": 1,
+      "unit": "علبة",
+      "vendor": "HungryStation",
+      "estimated_price": "8.32 SAR",
+      "product_url": "https://hungerstation.com/search?q=%D8%AF%D8%AC%D8%A7%D8%AC%20%282%20%D9%82%D8%B7%D8%B9%D8%A9%29"
+    },
+    {
+      "item": "معكرونة (1 حزمة)",
+      "quantity": 1,
+      "unit": "علبة",
+      "vendor": "HungryStation",
+      "estimated_price": "11.16 SAR",
+      "product_url": "https://hungerstation.com/search?q=%D9%85%D8%B9%D9%83%D8%B1%D9%88%D9%86%D8%A9%20%281%20%D8%AD%D8%B2%D9%85%D8%A9%29"
+    }
+  ],
+  "nutrition_info": null,
+  "meta": {
+    "confidence_threshold": 0.5,
+    "cache_saved_at": null
+  }
+}

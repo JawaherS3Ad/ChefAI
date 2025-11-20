@@ -1,0 +1,41 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* iOS-inspired variables (من ChefAI الأصلي) */
+@layer base {
+  :root {
+    --background: 0 0% 98%;
+    --foreground: 20 10% 15%;
+
+    --primary: 14 90% 60%;
+    --primary-foreground: 0 0% 100%;
+    --primary-light: 14 85% 70%;
+    --primary-dark: 14 85% 50%;
+
+    --secondary: 142 70% 50%;
+    --secondary-foreground: 0 0% 100%;
+
+    --muted: 20 10% 95%;
+    --muted-foreground: 20 5% 45%;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+  }
+}
+
+@layer utilities {
+  .ios-card {
+    @apply bg-card rounded-3xl shadow-md;
+  }
+
+  .ios-button {
+    @apply rounded-2xl font-semibold active:scale-95 transition-all;
+  }
+
+  .floating-nav {
+    @apply fixed bottom-4 left-4 right-4 bg-card rounded-3xl shadow-xl backdrop-blur-xl;
+  }
+}

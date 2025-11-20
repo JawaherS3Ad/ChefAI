@@ -2,23 +2,24 @@
 # ChefAI .gitignore
 # --------------------
 
-# 1. Virtual Environment (Crucial for performance)
-# Ignore the entire venv folder containing installed libraries
+# 1. Virtual Environment
 venv/
 
 # 2. System Files
 .DS_Store
 Thumbs.db
 
-# 3. Python Compiled Files and Metadata
+# 3. Python Compiled Files
 __pycache__/
 *.pyc
 *.pyo
 
 # 4. Logs and Temporary Files
 *.log
-/tmp/
+tmp/
 
 # 5. Environment Variables
 .env
-```eof
+
+# 6. Node.js Dependencies (Frontend)
+node_modules/

@@ -9,6 +9,25 @@ This repository documents the **current working version**, and outlines the **pl
 
 ---
 
+## 👩‍💻 **My Role**
+
+Built during the **AgentX Hackathon (November 2025)** by a team of four.
+I built the agent pipeline and the FastAPI backend in this repository: the LangGraph graphs, the vision step, the ingredient name-fixer, the recipe generator with model fallback, and the deployment setup.
+I work AI-first: I design the system and plan each change, use AI coding tools to implement it, then review and test the result.
+
+## 🧰 **Tech Stack**
+
+Python 3.11 · FastAPI · LangGraph · LangChain · Qwen2.5-VL (vision, via OpenRouter) · Qwen models for recipes, with a fallback order · Railway
+
+## 🔑 **Engineering Highlights**
+
+* **Two LangGraph state graphs:** *analyze* (vision → name-fixer → prepare → assemble) and *generate* (prepare → recipe → missing items & shopping → assemble).
+* **Structured JSON at every step**, ready for the frontend.
+* **Model fallback:** if one recipe model fails, the next one in the list is tried.
+* **Cleaning before generation:** an ingredient ontology and a name-fixer agent turn noisy vision output into a clean ingredient list.
+
+---
+
 # 🚀 **Mission**
 
 Help users cook with what they already have by:
@@ -152,8 +171,10 @@ Output → Recipe JSON (steps, time, missing items…)
 # ⚙️ **Running Locally**
 
 ```
+python -m venv venv && source venv/bin/activate
 pip install -r requirements.txt
-uvicorn main:app --reload
+cp .env.example .env   # then add your own keys (OPENROUTER_API_KEY, OPENAI_API_KEY)
+uvicorn chef_backend.main:app --reload
 ```
 
 Swagger UI:
@@ -236,6 +257,7 @@ And delivers a polished experience end-to-end.
 
 # ✔️ **Status**
 
-This repository is the official reference for the team.
+Built for the AgentX Hackathon (November 2025) and kept public as a portfolio project.
+The Round 1 version above is complete; the "Next Phase" items are ideas that were not implemented.
 
 ---

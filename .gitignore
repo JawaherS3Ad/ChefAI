@@ -23,3 +23,6 @@ tmp/
 
 # 6. Node.js Dependencies (Frontend)
 node_modules/
+
+# 7. Local run outputs
+chef_backend/cache/
